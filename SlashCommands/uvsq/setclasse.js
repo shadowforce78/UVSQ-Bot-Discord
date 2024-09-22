@@ -1,4 +1,6 @@
 const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
+const schemaClasse = require('../../schema/classe');
+
 module.exports = {
     name: "classe",
     description: "Permet de définir la classe de l'utilisateur",
@@ -34,9 +36,18 @@ module.exports = {
         ]
 
         const classeUser = interaction.options.getString("classe");
+
+
+        const data = await schemaClasse.findOne({ id: interaction.user.id });
+        if (!data) {
+            await schemaClasse.create({ id: interaction.user.id, classe: classeUser });
+        } else {
+            await schemaClasse.findOneAndUpdate({ id: interaction.user.id }, { classe: classeUser });
+        }
+
         if (!classe.includes(classeUser)) {
             return interaction.followUp({ content: "La classe n'est pas valide\nVeuillez choisir une classe parmi les suivantes : INF1-A, INF1-B, INF1-C, INF2-A FI, INF2-B FI, INF2-A FA, INF2-B FA, INF3-A FI, INF3-B FI, INF3-A FA, INF3-B FA" });
-        }else{
+        } else {
             interaction.followUp({ content: `Votre classe a été définie sur ${classeUser}` });
         }
     }
