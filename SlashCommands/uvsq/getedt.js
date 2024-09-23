@@ -85,6 +85,9 @@ module.exports = {
             });
         });
 
+        // Trier les cours par date de début
+        cours.sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut));
+
         const embed = new MessageEmbed()
             .setTitle("Emploi du temps")
             .setColor("#FF8080")
