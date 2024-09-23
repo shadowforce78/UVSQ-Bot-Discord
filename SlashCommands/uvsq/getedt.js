@@ -1,6 +1,7 @@
 const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
 const schemaClasse = require('../../schema/classe');
 const axios = require('axios');
+const nodeHtmlToImage = require('node-html-to-image')
 
 module.exports = {
     name: "edt",
@@ -72,6 +73,16 @@ module.exports = {
             const nomProf = descriptionParts[0].trim(); // Le nom du prof est avant le premier <br />
             const salleCours = descriptionParts[2].trim(); // La salle est après le premier <br />
 
+            // Cours Magistraux (CM)
+            if (nomCours.includes("CM")) {
+                var typeCours = "cm";
+            } else if (nomCours.includes("TD")) {
+                var typeCours = "td";
+            }
+            else if (nomCours.includes("TP")) {
+                var typeCours = "tp";
+            }
+
             const dateDebut = event.start; // Date de début du cours
             const dateFin = event.end;
 
@@ -81,28 +92,73 @@ module.exports = {
                 salleCours,
                 nomProf,
                 dateDebut,
-                dateFin
+                dateFin,
+                typeCours
             });
         });
 
         // Trier les cours par date de début
         cours.sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut));
 
-        const embed = new MessageEmbed()
-            .setTitle("Emploi du temps")
-            .setColor("#FF8080")
-            .setFooter("UVSQ")
-            .setTimestamp()
-            .setDescription("Voici votre emploi du temps")
-            .addFields(
-                cours.map(cours => {
-                    return {
-                        name: cours.nomCours,
-                        value: `Professeur : ${cours.nomProf}\nBatiment : ${cours.batimentCours}\nSalle : ${cours.salleCours}\nDate de début : ${cours.dateDebut}\nDate de fin : ${cours.dateFin}`
-                    };
-                })
-            );
+        nodeHtmlToImage({
+            output: './image.png',
+            html: `<html>
+            <head>
+                <style>
+                    table {
+                        font-family: Arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                    
+                    td, th {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    
+                    tr:nth-child(even) {
+                        background-color: #dddddd;
+                    }
 
-        interaction.followUp({ embeds: [embed] });
+                    .cm{
+                        background-color: #FF8080;
+                    }
+
+                    .td{
+                        background-color: #00FF00;
+                    }
+
+                    .tp{
+                        background-color: #8000FF;
+                    }
+                </style>
+            </head>
+            <body>
+                <table>
+                    <tr>
+                        <th>Nom du cours</th>
+                        <th>Professeur</th>
+                        <th>Batiment</th>
+                        <th>Salle</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                    </tr>
+                    ${cours.map(cours => {
+                return `<tr>
+                            <td class="${cours.typeCours}">${cours.nomCours}</td>
+                            <td>${cours.nomProf}</td>
+                            <td>${cours.batimentCours}</td>
+                            <td>${cours.salleCours}</td>
+                            <td>${cours.dateDebut}</td>
+                            <td>${cours.dateFin}</td>
+                        </tr>`
+            }).join('')}
+                </table>
+            </body>
+        </html>`
+        }).then(() => {
+            interaction.followUp({ files: ['./image.png'] });
+        });
     }
 };
