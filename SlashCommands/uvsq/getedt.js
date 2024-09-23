@@ -17,13 +17,22 @@ module.exports = {
 
         const classeUser = interaction.options.getString("classe");
         const url = "https://edt.iut-velizy.uvsq.fr/Home/GetCalendarData";
-        const postdata = "start=2024-09-24&end=2024-09-24&resType=103&calView=agendaWeek&federationIds%5B%5D=INF1-B&colourScheme=3";
         const method = "POST";
+        const data = schemaClasse.findOne({ id: interaction.user.id });
+
+        if (!data) {
+            return interaction.followUp('Vous n\'avez pas défini votre classe\nFaites `/classe` pour définir votre classe');
+        }
+
+        const classe = data.classe;
 
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "Accept": "application/json, text/javascript, */*; q=0.01"
         };
+
+
+        const postdata = `start=2024-09-23&end=2024-09-23&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
 
         const response = await axios.post(url, postdata, { headers: headers });
 
