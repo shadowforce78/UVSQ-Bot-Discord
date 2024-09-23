@@ -100,9 +100,18 @@ module.exports = {
         // Trier les cours par date de début
         cours.sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut));
 
+        // Grouper les cours par jour
+        const coursParJour = cours.reduce((acc, cours) => {
+            const dateCours = new Date(cours.dateDebut).toLocaleDateString('fr-FR');
+            if (!acc[dateCours]) acc[dateCours] = [];
+            acc[dateCours].push(cours);
+            return acc;
+        }, {});
+
         nodeHtmlToImage({
             output: './image.png',
-            html: `<html>
+            html: `
+            <html>
             <head>
                 <style>
                     table {
@@ -110,53 +119,64 @@ module.exports = {
                         border-collapse: collapse;
                         width: 100%;
                     }
-                    
+        
                     td, th {
                         border: 1px solid #dddddd;
                         text-align: left;
                         padding: 8px;
                     }
-                    
+        
                     tr:nth-child(even) {
                         background-color: #dddddd;
                     }
-
-                    .cm{
+        
+                    .cm {
                         background-color: #FF8080;
                     }
-
-                    .td{
+        
+                    .td {
                         background-color: #00FF00;
                     }
-
-                    .tp{
+        
+                    .tp {
                         background-color: #8000FF;
+                    }
+        
+                    h1{
+                        text-align: center;
                     }
                 </style>
             </head>
             <body>
-                <table>
-                    <tr>
-                        <th>Nom du cours</th>
-                        <th>Professeur</th>
-                        <th>Batiment</th>
-                        <th>Salle</th>
-                        <th>Date de début</th>
-                        <th>Date de fin</th>
-                    </tr>
-                    ${cours.map(cours => {
-                return `<tr>
-                            <td class="${cours.typeCours}">${cours.nomCours}</td>
-                            <td>${cours.nomProf}</td>
-                            <td>${cours.batimentCours}</td>
-                            <td>${cours.salleCours}</td>
-                            <td>${cours.dateDebut}</td>
-                            <td>${cours.dateFin}</td>
-                        </tr>`
-            }).join('')}
-                </table>
+                <h1>Emploi du temps du groupe ${classe} sur la période du ${dateDebut} au ${dateFin}</h1>
+                ${Object.keys(coursParJour).map(date => `
+                        <h2>Jour : ${date}</h2>
+                        <table>
+                            <tr>
+                                <th>Heure</th>
+                                <th>Matière</th>
+                                <th>Professeur</th>
+                                <th>Bâtiment</th>
+                                <th>Salle</th>
+                                <th>Type</th>
+                            </tr>
+                            ${coursParJour[date].map(cours => `
+                                    <tr>
+                                        <td>${new Date(cours.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(cours.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</td>
+                                        <td>${cours.nomCours}</td>
+                                        <td>${cours.nomProf}</td>
+                                        <td>${cours.batimentCours}</td>
+                                        <td>${cours.salleCours}</td>
+                                        <td class="${cours.typeCours}">${cours.typeCours.toUpperCase()}</td>
+                                    </tr>
+                                `).join('')
+                }
+                        </table>
+                    `).join('')
+                }
             </body>
-        </html>`
+            </html>
+            `
         }).then(() => {
             interaction.followUp({ files: ['./image.png'] });
         });
