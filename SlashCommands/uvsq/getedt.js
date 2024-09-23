@@ -10,13 +10,13 @@ module.exports = {
     options: [
         {
             name: "startdate",
-            description: "Date de début de l'emploi du temps",
+            description: "Date de début de l'emploi du temps (format : YYYY-MM-DD)",
             type: "STRING",
             required: true,
         },
         {
             name: "enddate",
-            description: "Date de fin de l'emploi du temps",
+            description: "Date de fin de l'emploi du temps (format : YYYY-MM-DD)",
             type: "STRING",
             required: true,
         }
