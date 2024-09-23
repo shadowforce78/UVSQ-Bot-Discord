@@ -7,6 +7,20 @@ module.exports = {
     description: "Permet de définir la classe de l'utilisateur",
     userperm: [""],
     botperm: [""],
+    options: [
+        {
+            name: "startdate",
+            description: "Date de début de l'emploi du temps",
+            type: "STRING",
+            required: true,
+        },
+        {
+            name: "enddate",
+            description: "Date de fin de l'emploi du temps",
+            type: "STRING",
+            required: true,
+        }
+    ],
     /**
     *
     * @param {Client} client
@@ -18,13 +32,22 @@ module.exports = {
         const classeUser = interaction.options.getString("classe");
         const url = "https://edt.iut-velizy.uvsq.fr/Home/GetCalendarData";
         const method = "POST";
-        const data = schemaClasse.findOne({ id: interaction.user.id });
+        // const data = schemaClasse.findOne({ id: interaction.user.id });
 
-        if (!data) {
-            return interaction.followUp('Vous n\'avez pas défini votre classe\nFaites `/classe` pour définir votre classe');
+        // if (!data) {
+        //     return interaction.followUp('Vous n\'avez pas défini votre classe\nFaites `/classe` pour définir votre classe');
+        // }
+
+        const classe = 'INF1-B'
+
+        const dateDebut = interaction.options.getString("startdate");
+        const dateFin = interaction.options.getString("enddate");
+
+
+        // Format de la date : YYYY-MM-DD
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateDebut) || !/^\d{4}-\d{2}-\d{2}$/.test(dateFin)) {
+            return interaction.followUp("La date doit être au format YYYY-MM-DD");
         }
-
-        const classe = data.classe;
 
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -32,7 +55,7 @@ module.exports = {
         };
 
 
-        const postdata = `start=2024-09-23&end=2024-09-23&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
+        const postdata = `start=${dateDebut}&end=${dateFin}&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
 
         const response = await axios.post(url, postdata, { headers: headers });
 
@@ -42,17 +65,19 @@ module.exports = {
 
         events.forEach(event => {
             const nomCours = event.eventCategory; // Nom du cours
-            const salleCours = event.sites[0];    // Salle du cours (première entrée dans "sites")
+            const batimentCours = event.sites[0];    // Batiment du cours (première entrée dans "sites")
 
             // Extraction du nom du prof depuis "description"
             const descriptionParts = event.description.split('<br />');
             const nomProf = descriptionParts[0].trim(); // Le nom du prof est avant le premier <br />
+            const salleCours = descriptionParts[2].trim(); // La salle est après le premier <br />
 
             const dateDebut = event.start; // Date de début du cours
             const dateFin = event.end;
 
             cours.push({
                 nomCours,
+                batimentCours,
                 salleCours,
                 nomProf,
                 dateDebut,
@@ -70,7 +95,7 @@ module.exports = {
                 cours.map(cours => {
                     return {
                         name: cours.nomCours,
-                        value: `Professeur : ${cours.nomProf}\nSalle : ${cours.salleCours}\nDate de début : ${cours.dateDebut}\nDate de fin : ${cours.dateFin}`
+                        value: `Professeur : ${cours.nomProf}\nBatiment : ${cours.batimentCours}\nSalle : ${cours.salleCours}\nDate de début : ${cours.dateDebut}\nDate de fin : ${cours.dateFin}`
                     };
                 })
             );
