@@ -66,7 +66,7 @@ module.exports = {
 
         events.forEach(event => {
             const nomCours = event.eventCategory; // Nom du cours
-            const batimentCours = event.sites[0];    // Batiment du cours (première entrée dans "sites")
+            const batimentCours = event.sites[0]; // Batiment du cours (première entrée dans "sites")
 
             // Extraction du nom du prof depuis "description"
             const descriptionParts = event.description.split('<br />');
@@ -78,8 +78,7 @@ module.exports = {
                 var typeCours = "cm";
             } else if (nomCours.includes("TD")) {
                 var typeCours = "td";
-            }
-            else if (nomCours.includes("TP")) {
+            } else if (nomCours.includes("TP")) {
                 var typeCours = "tp";
             }
 
@@ -114,20 +113,38 @@ module.exports = {
             <html>
             <head>
                 <style>
-                    table {
+                    body {
                         font-family: Arial, sans-serif;
+                    }
+        
+                    .container {
+                        display: flex;
+                        justify-content: space-between;
+                        flex-wrap: wrap;
+                    }
+        
+                    .day-container {
+                        flex: 1;
+                        margin: 10px;
+                        padding: 10px;
+                        border: 1px solid #dddddd;
+                        border-radius: 10px;
+                    }
+        
+                    table {
                         border-collapse: collapse;
                         width: 100%;
+                        font-size: 12px; /* Réduction de la taille de police pour plus de compacité */
                     }
         
                     td, th {
                         border: 1px solid #dddddd;
                         text-align: left;
-                        padding: 8px;
+                        padding: 4px; /* Moins de padding pour compacter */
                     }
         
                     tr:nth-child(even) {
-                        background-color: #dddddd;
+                        background-color: #f2f2f2;
                     }
         
                     .cm {
@@ -142,43 +159,50 @@ module.exports = {
                         background-color: #8000FF;
                     }
         
-                    h1{
+                    h2 {
                         text-align: center;
+                        font-size: 16px;
+                        margin: 0 0 10px 0;
                     }
                 </style>
             </head>
             <body>
-                <h1>Emploi du temps du groupe ${classe} sur la période du ${dateDebut} au ${dateFin}</h1>
-                ${Object.keys(coursParJour).map(date => `
-                        <h2>Jour : ${date}</h2>
-                        <table>
-                            <tr>
-                                <th>Heure</th>
-                                <th>Matière</th>
-                                <th>Professeur</th>
-                                <th>Bâtiment</th>
-                                <th>Salle</th>
-                                <th>Type</th>
-                            </tr>
-                            ${coursParJour[date].map(cours => `
+                <h1 style="text-align: center;">Emploi du temps de la semaine</h1>
+                <div class="container">
+                    ${Object.keys(coursParJour).map(date => `
+                            <div class="day-container">
+                                <h2>${date}</h2>
+                                <table>
                                     <tr>
-                                        <td>${new Date(cours.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(cours.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</td>
-                                        <td>${cours.nomCours}</td>
-                                        <td>${cours.nomProf}</td>
-                                        <td>${cours.batimentCours}</td>
-                                        <td>${cours.salleCours}</td>
-                                        <td class="${cours.typeCours}">${cours.typeCours.toUpperCase()}</td>
+                                        <th>Heure</th>
+                                        <th>Matière</th>
+                                        <th>Professeur</th>
+                                        <th>Bâtiment</th>
+                                        <th>Salle</th>
+                                        <th>Type</th>
                                     </tr>
-                                `).join('')
+                                    ${coursParJour[date].map(cours => `
+                                            <tr>
+                                                <td>${new Date(cours.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(cours.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</td>
+                                                <td>${cours.nomCours}</td>
+                                                <td>${cours.nomProf}</td>
+                                                <td>${cours.batimentCours}</td>
+                                                <td>${cours.salleCours}</td>
+                                                <td class="${cours.typeCours}">${cours.typeCours.toUpperCase()}</td>
+                                            </tr>
+                                        `).join('')
                 }
-                        </table>
-                    `).join('')
+                                </table>
+                            </div>
+                        `).join('')
                 }
+                </div>
             </body>
             </html>
             `
         }).then(() => {
             interaction.followUp({ files: ['./image.png'] });
         });
+
     }
 };
