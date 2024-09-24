@@ -39,7 +39,7 @@ module.exports = {
         //     return interaction.followUp('Vous n\'avez pas défini votre classe\nFaites `/classe` pour définir votre classe');
         // }
 
-        const classe = 'INF1-B'
+        const classe = 'INF1-B' // data.classe;
 
         const dateDebut = interaction.options.getString("startdate");
         const dateFin = interaction.options.getString("enddate");
@@ -169,7 +169,7 @@ module.exports = {
                 </style>
             </head>
             <body>
-                <h1 style="text-align: center;">Emploi du temps de la semaine</h1>
+                <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
                 <div class="container">
                     ${Object.keys(coursParJour).map(date => `
                             <div class="day-container">

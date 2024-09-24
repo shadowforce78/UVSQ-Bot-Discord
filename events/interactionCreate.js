@@ -3,7 +3,7 @@ const client = require("../index");
 client.on("interactionCreate", async (interaction) => {
     // Slash Command Handling
     if (interaction.isCommand()) {
-        await interaction.deferReply({ ephemeral: false }).catch(() => {});
+        await interaction.deferReply({ ephemeral: false }).catch(() => { });
 
         const cmd = client.slashCommands.get(interaction.commandName);
         if (!cmd)
@@ -19,7 +19,7 @@ client.on("interactionCreate", async (interaction) => {
                 });
             } else if (option.value) args.push(option.value);
         }
-         const userperm = interaction.member.permissions.has(cmd.userperm);
+        const userperm = interaction.member.permissions.has(cmd.userperm);
 
         if (!userperm)
             return interaction.followUp({
@@ -41,5 +41,21 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.deferReply({ ephemeral: false });
         const command = client.slashCommands.get(interaction.commandName);
         if (command) command.run(client, interaction);
+    }
+
+    if (interaction.isButton()) {
+
+        const userID = interaction.user.id;
+        if (interaction.customId === "daily") {
+            interaction.reply({ content: `Daily Reminder Set for <@!${userID}>`, ephemeral: true })
+        }
+
+        if (interaction.customId === "weekly") {
+            interaction.reply({ content: `Weekly Reminder Set for <@!${userID}>`, ephemeral: true })
+        }
+
+        if (interaction.customId === "disable") {
+            interaction.reply({ content: `Reminder Disabled for <@!${userID}>`, ephemeral: true })
+        }
     }
 });
