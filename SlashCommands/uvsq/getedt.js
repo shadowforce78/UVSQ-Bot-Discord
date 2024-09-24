@@ -72,6 +72,7 @@ module.exports = {
             const descriptionParts = event.description.split('<br />');
             const nomProf = descriptionParts[0].trim(); // Le nom du prof est avant le premier <br />
             const salleCours = descriptionParts[2].trim(); // La salle est après le premier <br />
+            const nomMatiere = descriptionParts[3].trim(); // La matière est après le deuxième <br />
 
             // Cours Magistraux (CM)
             if (nomCours.includes("CM")) {
@@ -92,7 +93,8 @@ module.exports = {
                 nomProf,
                 dateDebut,
                 dateFin,
-                typeCours
+                typeCours,
+                nomMatiere
             });
         });
 
@@ -184,7 +186,7 @@ module.exports = {
                                     ${coursParJour[date].map(cours => `
                                             <tr>
                                                 <td>${new Date(cours.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(cours.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</td>
-                                                <td>${cours.nomCours}</td>
+                                                <td>${cours.nomMatiere}</td>
                                                 <td>${cours.nomProf}</td>
                                                 <td>${cours.batimentCours}</td>
                                                 <td>${cours.salleCours}</td>
