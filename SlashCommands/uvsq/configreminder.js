@@ -9,20 +9,11 @@ module.exports = {
     description: "Configure les rappels automatiques de l'emploi du temps",
     userperm: [""],
     botperm: [""],
-    // options: [
-    //     {
-    //         name: "",
-    //         description: "",
-    //         type: "",
-    //         required: true,
-    //     },
-    // ],
-    /**
-     *
-     * @param {Client} client
-     * @param {CommandInteraction} interaction
-     * @param {String[]} args
-     */
+    /*
+    * @param {Client} client
+    * @param {CommandInteraction} interaction
+    * @param {String[]} args
+    */
     run: async (client, interaction, args) => {
         const embed = new MessageEmbed()
             .setTitle("Configuration des rappels")
