@@ -5,5 +5,7 @@ module.exports = mongoose.model(
     new mongoose.Schema({
         id: String,
         classe: String,
+        dailyReminder: Boolean,
+        weeklyReminder: Boolean
     })
 );

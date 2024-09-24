@@ -1,4 +1,5 @@
 const client = require("../index");
+const classe = require("../schema/classe");
 
 client.on("interactionCreate", async (interaction) => {
     // Slash Command Handling
@@ -6,8 +7,7 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.deferReply({ ephemeral: false }).catch(() => { });
 
         const cmd = client.slashCommands.get(interaction.commandName);
-        if (!cmd)
-            return interaction.followUp({ content: "An error has occured " });
+        if (!cmd) return interaction.followUp({ content: "An error has occured " });
 
         const args = [];
 
@@ -31,7 +31,9 @@ client.on("interactionCreate", async (interaction) => {
             return interaction.followUp({
                 content: `I need \`${cmd.botperm || []}\` Permissions`,
             });
-        interaction.member = interaction.guild.members.cache.get(interaction.user.id);
+        interaction.member = interaction.guild.members.cache.get(
+            interaction.user.id
+        );
 
         cmd.run(client, interaction, args);
     }
@@ -44,18 +46,67 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     if (interaction.isButton()) {
+        const data = await classe.findOne({ id: interaction.user.id });
+        if (!data) {
+            interaction.reply({
+                content: "You need to set your class first with /classe",
+                ephemeral: true,
+            });
+        }
 
         const userID = interaction.user.id;
         if (interaction.customId === "daily") {
-            interaction.reply({ content: `Daily Reminder Set for <@!${userID}>`, ephemeral: true })
+            classe.findOneAndUpdate(
+                { id: userID },
+                { dailyReminder: true },
+                { upsert: true },
+                function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                    }
+                }
+            );
+
+            interaction.reply({
+                content: `Daily Reminder Set for <@!${userID}>`,
+                ephemeral: true,
+            });
         }
 
         if (interaction.customId === "weekly") {
-            interaction.reply({ content: `Weekly Reminder Set for <@!${userID}>`, ephemeral: true })
+            classe.findOneAndUpdate(
+                { id: userID },
+                { weeklyReminder: true },
+                { upsert: true },
+                function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                    }
+                }
+            );
+
+            interaction.reply({
+                content: `Weekly Reminder Set for <@!${userID}>`,
+                ephemeral: true,
+            });
         }
 
         if (interaction.customId === "disable") {
-            interaction.reply({ content: `Reminder Disabled for <@!${userID}>`, ephemeral: true })
+            classe.findOneAndUpdate(
+                { id: userID },
+                { dailyReminder: false, weeklyReminder: false },
+                { upsert: true },
+                function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                    }
+                }
+            );
+
+            interaction.reply({
+                content: `Reminder Disabled for <@!${userID}>`,
+                ephemeral: true,
+            });
         }
     }
 });
