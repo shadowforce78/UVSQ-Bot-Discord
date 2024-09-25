@@ -59,6 +59,21 @@ module.exports = {
             }
         );
 
+        const today = new Date();
+        const day = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+        let dateDebut;
+
+        if (day !== 1) { // If today is not a Monday
+            const diff = today.getDate() - day + 1;
+            dateDebut = new Date(today.setDate(diff));
+        } else {
+            dateDebut = today;
+        }
+
+        dateDebut = dateDebut.toISOString().slice(0, 10); // Format: YYYY-MM-DD
+
+        console.log(dateDebut)
+
         interaction.followUp({ embeds: [embed], components: [row] });
     },
 };
