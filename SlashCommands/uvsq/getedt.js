@@ -32,7 +32,6 @@ module.exports = {
 
         const classeUser = interaction.options.getString("classe");
         const url = "https://edt.iut-velizy.uvsq.fr/Home/GetCalendarData";
-        const method = "POST";
         // const data = schemaClasse.findOne({ id: interaction.user.id });
 
         // if (!data) {
