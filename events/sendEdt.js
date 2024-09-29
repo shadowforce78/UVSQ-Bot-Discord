@@ -38,9 +38,8 @@ client.on("ready", async () => {
   };
 
   const url = "https://edt.iut-velizy.uvsq.fr/Home/GetCalendarData";
-  const postdata = `start=${formatDate(dateDebut)}&end=${
-    formatDate(dateFin)
-  }&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
+  const postdata = `start=${formatDate(dateDebut)}&end=${formatDate(dateFin)
+    }&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
 
   const response = await axios.post(url, postdata, { headers: headers });
 
@@ -94,9 +93,8 @@ client.on("ready", async () => {
   }, {});
 
   // Pour une journée :
-  const postdata2 = `start=${formatDate(today)}&end=${
-    formatDate(today)
-  }&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
+  const postdata2 = `start=${formatDate(today)}&end=${formatDate(today)
+    }&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
 
   const response2 = await axios.post(url, postdata2, { headers: headers });
 
@@ -218,12 +216,11 @@ client.on("ready", async () => {
             <body>
                 <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
                 <div class="container">
-                    ${
-      Object.keys(coursParJour2).map((date) => {
-        const today = new Date().toLocaleDateString("fr-FR");
-        const isToday = date === today ? "today" : "";
+                    ${Object.keys(coursParJour2).map((date) => {
+      const today = new Date().toLocaleDateString("fr-FR");
+      const isToday = date === today ? "today" : "";
 
-        return `
+      return `
                             <div class="day-container ${isToday}">
                                 <h2>${date}</h2>
                                 <table>
@@ -235,20 +232,17 @@ client.on("ready", async () => {
                                         <th>Salle</th
                                         <th>Type</th>
                                     </tr>
-                                    ${
-          coursParJour2[date].map((cours) => `
+                                    ${coursParJour2[date].map((cours) => `
                                             <tr>
-                                                <td>${
-            new Date(cours.dateDebut).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          } - ${
-            new Date(cours.dateFin).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          }</td>
+                                                <td>${new Date(cours.dateDebut).toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+        } - ${new Date(cours.dateFin).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        }</td>
                                                 <td>${cours.nomMatiere}</td>
                                                 <td>${cours.nomProf}</td>
                                                 <td>${cours.batimentCours}</td>
@@ -260,8 +254,8 @@ client.on("ready", async () => {
                                 </table>
                             </div>
                         `;
-      }).join("")
-    }
+    }).join("")
+      }
                 </div>
             </body>
             </html>
@@ -337,12 +331,11 @@ client.on("ready", async () => {
             <body>
                 <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
                 <div class="container">
-                    ${
-      Object.keys(coursParJour).map((date) => {
-        const today = new Date().toLocaleDateString("fr-FR");
-        const isToday = date === today ? "today" : "";
+                    ${Object.keys(coursParJour).map((date) => {
+      const today = new Date().toLocaleDateString("fr-FR");
+      const isToday = date === today ? "today" : "";
 
-        return `
+      return `
                             <div class="day-container ${isToday}">
                                 <h2>${date}</h2>
                                 <table>
@@ -354,20 +347,17 @@ client.on("ready", async () => {
                                         <th>Salle</th>
                                         <th>Type</th>
                                     </tr>
-                                    ${
-          coursParJour[date].map((cours) => `
+                                    ${coursParJour[date].map((cours) => `
                                             <tr>
-                                                <td>${
-            new Date(cours.dateDebut).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          } - ${
-            new Date(cours.dateFin).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          }</td>
+                                                <td>${new Date(cours.dateDebut).toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+        } - ${new Date(cours.dateFin).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        }</td>
                                                 <td>${cours.nomMatiere}</td>
                                                 <td>${cours.nomProf}</td>
                                                 <td>${cours.batimentCours}</td>
@@ -379,8 +369,8 @@ client.on("ready", async () => {
                                 </table>
                             </div>
                         `;
-      }).join("")
-    }
+    }).join("")
+      }
                 </div>
             </body>
             </html>
