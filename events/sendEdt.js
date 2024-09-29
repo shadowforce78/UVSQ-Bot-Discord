@@ -376,7 +376,7 @@ client.on("ready", async () => {
             </html>
         `,
   });
-  // Envoi de l'image a l'utilisateur
-  user.send({ files: ["./imageDaily.png"] });
-  user.send({ files: ["./imageWeekly.png"] });
+  // // Envoi de l'image a l'utilisateur
+  // user.send({ files: ["./imageDaily.png"] });
+  // user.send({ files: ["./imageWeekly.png"] });
 });
