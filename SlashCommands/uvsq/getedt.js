@@ -66,14 +66,14 @@ module.exports = {
 
       // Gestion des cours
       const cours = events.map(event => ({
-        nomCours: event.eventCategory,
-        batimentCours: event.sites[0],
-        nomProf: event.description.split("<br />")[0].trim(),
-        salleCours: event.description.split("<br />")[2].trim(),
-        nomMatiere: event.description.split("<br />")[3].trim(),
-        dateDebut: event.start,
-        dateFin: event.end,
-        typeCours: determineTypeCours(event.eventCategory)
+        nomCours: event.eventCategory || "Pas d'info",
+        batimentCours: event.sites ? event.sites[0] : "Pas d'info",
+        nomProf: event.description.split("<br />")[0] ? event.description.split("<br />")[0].trim() : "Pas d'info",
+        salleCours: event.description.split("<br />")[2] ? event.description.split("<br />")[2].trim() : "Pas d'info",
+        nomMatiere: event.description.split("<br />")[3] ? event.description.split("<br />")[3].trim() : "Pas d'info",
+        dateDebut: event.start || "Pas d'info",
+        dateFin: event.end || "Pas d'info",
+        typeCours: determineTypeCours(event.eventCategory) || "autre",
       }));
 
       // Tri des cours par date de début
@@ -100,6 +100,8 @@ function determineTypeCours(nomCours) {
   if (nomCours.includes("TD")) return "td";
   if (nomCours.includes("TP")) return "tp";
   if (nomCours.includes('DS')) return "ds";
+  if (nomCours.includes('Projet en autonomie')) return "sae";
+  if (nomCours.includes('Integration')) return "int";
   return "autre";
 }
 
@@ -151,6 +153,8 @@ async function generateImage(classe, coursParJour) {
             .td { background-color: #00FF00; }
             .tp { background-color: #8000FF; }
             .ds { background-color: #ff00ff; }
+            .sae { background-color: #c0c0c0; }
+            .int { background-color: #ffff00; }
             h2 { text-align: center; font-size: 16px; margin: 0 0 10px 0; }
         </style>
     </head>
