@@ -99,6 +99,7 @@ function determineTypeCours(nomCours) {
   if (nomCours.includes("CM")) return "cm";
   if (nomCours.includes("TD")) return "td";
   if (nomCours.includes("TP")) return "tp";
+  if (nomCours.includes('DS')) return "ds";
   return "autre";
 }
 
@@ -149,6 +150,7 @@ async function generateImage(classe, coursParJour) {
             .cm { background-color: #FF8080; }
             .td { background-color: #00FF00; }
             .tp { background-color: #8000FF; }
+            .ds { background-color: #ff00ff; }
             h2 { text-align: center; font-size: 16px; margin: 0 0 10px 0; }
         </style>
     </head>

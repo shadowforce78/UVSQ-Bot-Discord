@@ -64,6 +64,8 @@ client.on("ready", async () => {
       var typeCours = "td";
     } else if (nomCours.includes("TP")) {
       var typeCours = "tp";
+    } else if (nomCours.includes('DS')) {
+      var typeCours = "ds";
     }
 
     const dateDebut = event.start; // Date de début du cours
@@ -119,6 +121,8 @@ client.on("ready", async () => {
       var typeCours = "td";
     } else if (nomCours.includes("TP")) {
       var typeCours = "tp";
+    } else if (nomCours.includes('DS')) {
+      var typeCours = "ds";
     }
 
     const dateDebut = event.start; // Date de début du cours
@@ -198,6 +202,10 @@ client.on("ready", async () => {
     
                     .tp {
                         background-color: #8000FF;
+                    }
+                    
+                    .ds{
+                      background-color : #ff00ff;
                     }
     
                     .today {
@@ -314,6 +322,10 @@ client.on("ready", async () => {
                     .tp {
                         background-color: #8000FF;
                     }
+
+                    .ds{
+                      background-color : #ff00ff;
+                    }
     
                     .today {
                         border: 3px solid #FFFF00; /* Contour jaune pour la journée actuelle */
@@ -377,6 +389,6 @@ client.on("ready", async () => {
         `,
   });
   // // Envoi de l'image a l'utilisateur
-  // user.send({ files: ["./imageDaily.png"] });
-  // user.send({ files: ["./imageWeekly.png"] });
+  user.send({ files: ["./imageDaily.png"] });
+  user.send({ files: ["./imageWeekly.png"] });
 });
