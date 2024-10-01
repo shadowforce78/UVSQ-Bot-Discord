@@ -389,6 +389,6 @@ client.on("ready", async () => {
         `,
   });
   // // Envoi de l'image a l'utilisateur
-  user.send({ files: ["./imageDaily.png"] });
-  user.send({ files: ["./imageWeekly.png"] });
+    // user.send({ files: ["./imageDaily.png"] });
+    // user.send({ files: ["./imageWeekly.png"] });
 });
