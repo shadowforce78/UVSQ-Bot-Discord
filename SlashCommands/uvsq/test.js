@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
+const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar } = require("../../EDTFunction/getInfo");
 const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir installé cette bibliothèque
 
@@ -16,14 +16,13 @@ function determineTypeCours(nomCours) {
 // Fonction pour grouper les cours par jour
 function groupCoursByDay(cours) {
     return cours.reduce((acc, cours) => {
-        const dateCours = new Date(cours.start).toLocaleDateString("fr-FR");
+        const dateCours = new Date(cours.dateDebut).toLocaleDateString("fr-FR");
         if (!acc[dateCours]) acc[dateCours] = [];
         acc[dateCours].push(cours);
         return acc;
     }, {});
 }
 
-// Fonction pour générer l'image de l'emploi du temps
 // Fonction pour générer l'image de l'emploi du temps
 async function generateImage(classe, coursParJour) {
     const html = `
@@ -84,12 +83,12 @@ async function generateImage(classe, coursParJour) {
                         </tr>
                         ${coursParJour[date].map(cours => `
                             <tr>
-                                <td>${new Date(cours.start).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${new Date(cours.end).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</td>
-                                <td>${cours.title}</td>
-                                <td>${cours.description.split('<br />')[0]}</td> <!-- Pour obtenir le nom du professeur -->
-                                <td>${(cours.sites && Array.isArray(cours.sites)) ? cours.sites.join(', ') : 'N/A'}</td> <!-- Vérification pour le bâtiment -->
-                                <td>${(cours.modules && Array.isArray(cours.modules)) ? cours.modules.join(', ') : 'N/A'}</td> <!-- Vérification pour la salle -->
-                                <td class="${determineTypeCours(cours.title)}">${determineTypeCours(cours.title).toUpperCase()}</td>
+                                <td>${new Date(cours.dateDebut).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${new Date(cours.dateFin).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</td>
+                                <td>${cours.matiere}</td>
+                                <td>${cours.professeurs}</td>
+                                <td>${cours.sites}</td>
+                                <td>${cours.salle}</td>
+                                <td class="${determineTypeCours(cours.matiere)}">${determineTypeCours(cours.matiere).toUpperCase()}</td>
                             </tr>`).join('')}
                     </table>
                 </div>`).join('')}
@@ -100,7 +99,6 @@ async function generateImage(classe, coursParJour) {
 
     return nodeHtmlToImage({ output: './image.png', html });
 }
-
 
 module.exports = {
     name: "test",
@@ -114,8 +112,8 @@ module.exports = {
     * @param {String[]} args
     */
     run: async (client, interaction, args) => {
-        const startDate = '2024-10-02'; // Date de début
-        const endDate = '2024-10-02'; // Date de fin
+        const startDate = '2024-10-08'; // Date de début
+        const endDate = '2024-10-08'; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
@@ -127,17 +125,14 @@ module.exports = {
                 return interaction.followUp({ content: "Aucun événement trouvé pour cette date.", ephemeral: true });
             }
 
-            // Trier les cours par date de début
-            const coursSorted = calendarData.sort((a, b) => new Date(a.start) - new Date(b.start));
-
             // Grouper les cours par jour
-            const coursParJour = groupCoursByDay(coursSorted);
+            const coursParJour = groupCoursByDay(calendarData);
 
             // Générer l'image de l'emploi du temps
             await generateImage(classe, coursParJour);
 
-            // Envoyer un message de succès
-            interaction.followUp({ content: "Image de l'emploi du temps générée avec succès !", ephemeral: true });
+            // Envoyer un message de succès avec l'image générée
+            await interaction.followUp({ content: "Image de l'emploi du temps générée avec succès !", files: ['./image.png'], ephemeral: true });
 
         } catch (err) {
             console.error(err); // Afficher l'erreur dans la console pour le débogage

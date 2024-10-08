@@ -4,6 +4,7 @@ const axios = require("axios");
 const nodeHtmlToImage = require("node-html-to-image");
 
 client.on("ready", async () => {
+  return
   // const data = await classe.findOne({ id: interaction.user.id });
   const userID = "918916801994309752";
   const user = await client.users.fetch(userID);
@@ -52,10 +53,10 @@ client.on("ready", async () => {
     const batimentCours = event.sites[0]; // Batiment du cours (première entrée dans "sites")
 
     // Extraction du nom du prof depuis "description"
-    const descriptionParts = event.description.split("<br />");
-    const nomProf = descriptionParts[0].trim(); // Le nom du prof est avant le premier <br />
-    const salleCours = descriptionParts[2].trim(); // La salle est après le premier <br />
-    const nomMatiere = descriptionParts[3].trim(); // La matière est après le deuxième <br />
+    const descriptionParts = event.description.split("<br />") || "Non spécifié";
+    const nomProf = (descriptionParts[1] && descriptionParts[1].trim()) || "Non spécifié"; // Le nom du prof est avant le premier <br />
+    const salleCours = (descriptionParts[2] && descriptionParts[2].trim()) || "Non spécifié"; // La salle est après le premier <br />
+    const nomMatiere = (descriptionParts[3] && descriptionParts[3].trim()) || "Non spécifié"; // La matière est après le deuxième <br />
 
     // Cours Magistraux (CM)
     if (nomCours.includes("CM")) {

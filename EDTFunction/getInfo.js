@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// Fonction pour récupérer l'emploi du temps
+// Fonction pour récupérer et formater l'emploi du temps
 async function getCalendar(startDate, endDate, classe) {
     // URL de l'API
     const url = "https://edt.iut-velizy.uvsq.fr/Home/GetCalendarData";
@@ -18,36 +18,56 @@ async function getCalendar(startDate, endDate, classe) {
         const response = await axios.post(url, postData, { headers });
         const events = response.data;
 
-        // Vérifier si des événements sont renvoyés
+        // Vérifier s'il y a des événements
         if (!Array.isArray(events) || events.length === 0) {
             console.log("Aucun événement trouvé pour la période donnée.");
             return [];
         }
 
-        // Mapper les événements pour obtenir les informations nécessaires
+        // Fonction d'aide pour nettoyer et formater les descriptions
+        function parseDescription(description) {
+            const parts = description ? description.split('<br />').map(part => part.trim()) : [];
+
+            // Extraire les informations de la description
+            const nomProf = parts[0] || "Non spécifié";
+            const nomClasse = parts[2] || "Non spécifié";
+            const nomMatiere = parts[3] || "Non spécifié";
+            const salleCours = parts[4] || "Non spécifié";
+
+            return { nomProf, nomClasse, nomMatiere, salleCours };
+        }
+
+        // Mapper les événements en structurant bien les données, avec prise en compte des cas où certaines infos peuvent manquer
         const calendarData = events.map((event) => {
+            const { nomProf, nomClasse, nomMatiere, salleCours } = parseDescription(event.description);
+
             return {
                 id: event.id,
-                start: event.start,
-                end: event.end,
-                allDay: event.allDay,
-                title: event.description.split('<br />')[0],  // Prend le nom de l'enseignant
-                description: event.description.replace(/<br\s*\/?>/g, "\n"), // Remplace les balises HTML par des sauts de ligne
-                location: event.sites.join(', '),  // Joins les sites s'il y en a plusieurs
-                department: event.department,
-                faculty: event.faculty,
-                eventCategory: event.eventCategory,
-                modules: event.modules.join(', '), // Joins les modules s'il y en a plusieurs
-                backgroundColor: event.backgroundColor,
-                textColor: event.textColor,
+                dateDebut: event.start,
+                dateFin: event.end,
+                jourComplet: event.allDay,
+                professeurs: nomProf,  // Nom du professeur
+                matiere: nomMatiere,   // Nom de la matière
+                classe: nomClasse,     // Nom de la classe (ex: INF1-B)
+                salle: salleCours !== "Non spécifié" ? salleCours : "Salle non précisée",  // Salle de cours, ou indication si absente
+                sites: event.sites && event.sites.length > 0 ? event.sites.join(', ') : "Site non précisé",  // Emplacement
+                categorieCours: event.eventCategory || "Type de cours non précisé",  // Catégorie du cours (ex: CM, TP)
+                modules: event.modules && event.modules.length > 0 ? event.modules.join(', ') : "Module non précisé",  // Modules associés
+                department: event.department || "Département non précisé",  // Département
+                faculty: event.faculty || "Faculté non précisée",  // Faculté
+                couleurArrierePlan: event.backgroundColor || "#FFFFFF",  // Couleur de fond par défaut
+                couleurTexte: event.textColor || "#000000",  // Couleur du texte par défaut
             };
         });
 
-        return calendarData; // Retourne les données des événements
+        // Sort
+        calendarData.sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut))
+
+        return calendarData;  // Retourne les données formatées
 
     } catch (error) {
-        console.error("Erreur lors de la récupération des données:", error);
-        return null; // Retourner null en cas d'erreur
+        console.error("Erreur lors de la récupération des données :", error);
+        return null;  // Retourner null en cas d'erreur
     }
 }
 
