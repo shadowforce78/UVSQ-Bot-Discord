@@ -11,8 +11,12 @@ async function getCalendar(startDate, endDate, classe) {
         "Accept": "application/json, text/javascript, */*; q=0.01",
     };
 
+    const group = "VEL@INF1-B2@103".split("@");
+    if (group.length == 2) {
+        group.push("103");
+    }
     // Corps de la requête
-    const postData = `start=${startDate}&end=${endDate}&resType=103&calView=agendaWeek&federationIds%5B%5D=${classe}&colourScheme=3`;
+    const postData = `start=${startDate}&end=${endDate}&resType=${group[2]}&calView=agendaDay&federationIds%5B%5D=${group[1]}&colourScheme=3`
 
     try {
         const response = await axios.post(url, postData, { headers });
@@ -36,7 +40,9 @@ async function getCalendar(startDate, endDate, classe) {
             "Cours Magistraux (CM)": "red",
             "CM": "blue",
             "Réunion": "purple",
-            "TD": "yellow"
+            "TD": "yellow",
+            "Projet en autonomie": "grey",
+            "Integration": "yellow",
         }
 
         // Mapper les événements en structurant bien les données, avec prise en compte des cas où certaines infos peuvent manquer
@@ -45,7 +51,9 @@ async function getCalendar(startDate, endDate, classe) {
             // Extraire les informations de la description
             // TODO get group and colors : https://github.com/Escartem/EDTVelizy/blob/master/app/api/getCalendar/route.js
 
-            const group = []
+
+
+            const meta = event.description.replaceAll("\r\n", "").split("<br />")
 
 
             return {
@@ -54,14 +62,15 @@ async function getCalendar(startDate, endDate, classe) {
                 people: group[0] == "VEL" ? [meta[0]] : ["Aucun prof"],
                 location: group[0] == "VEL" ? meta[2] : meta[1],
                 calendarId: colors[event.eventCategory],
+                eventCategory: event.eventCategory,
                 start: convertDateTime(event.start),
                 end: convertDateTime(event.end),
-                full: 0
+                full: 0,
             };
         });
 
         // Sort
-        calendarData.sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut))
+        calendarData.sort((a, b) => new Date(a.start) - new Date(b.start))
 
         return calendarData;  // Retourne les données formatées
 

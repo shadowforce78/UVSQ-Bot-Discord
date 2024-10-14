@@ -14,14 +14,29 @@ function determineTypeCours(nomCours) {
 }
 
 // Fonction pour grouper les cours par jour
+// Fonction pour grouper les cours par jour et formater les dates
 function groupCoursByDay(cours) {
     return cours.reduce((acc, cours) => {
-        const dateCours = new Date(cours.dateDebut).toLocaleDateString("fr-FR");
-        if (!acc[dateCours]) acc[dateCours] = [];
+        // Convertir la date de début du cours en format JJ/MM/AAAA
+        const dateCours = new Date(cours.start).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        // Si ce jour n'existe pas encore dans l'accumulateur, l'initialiser
+        if (!acc[dateCours]) {
+            acc[dateCours] = [];
+        }
+
+        // Ajouter le cours dans le tableau correspondant à cette date
         acc[dateCours].push(cours);
+
         return acc;
     }, {});
 }
+
+
 
 // Fonction pour générer l'image de l'emploi du temps
 async function generateImage(classe, coursParJour) {
@@ -47,23 +62,31 @@ async function generateImage(classe, coursParJour) {
             table {
                 border-collapse: collapse;
                 width: 100%;
-                font-size: 12px;
+                font-size: 14px;
+                margin-bottom: 10px;
             }
+            
             td, th {
                 border: 1px solid #dddddd;
-                text-align: left;
-                padding: 4px;
+                text-align: center; /* Centrer le texte */
+                padding: 8px; /* Agrandir un peu les cellules */
             }
+            
+            h2 { 
+                text-align: center; 
+                font-size: 18px; /* Agrandir le titre */
+                margin-bottom: 15px;
+            }
+            
             tr:nth-child(even) {
                 background-color: #f2f2f2;
             }
-            .cm { background-color: #FF8080; }
-            .td { background-color: #00FF00; }
-            .tp { background-color: #8000FF; }
-            .ds { background-color: #ff00ff; }
-            .sae { background-color: #c0c0c0; }
-            .int { background-color: #ffff00; }
-            h2 { text-align: center; font-size: 16px; margin: 0 0 10px 0; }
+
+            .blue { background-color: #00FF00; }
+            .purple { background-color: #8000FF; }
+            .red { background-color: #FF8080; }
+            .yellow { background-color: #ffff00; }
+            .grey { background-color: #808080; }            
         </style>
     </head>
     <body>
@@ -77,18 +100,16 @@ async function generateImage(classe, coursParJour) {
                             <th>Heure</th>
                             <th>Matière</th>
                             <th>Professeur</th>
-                            <th>Bâtiment</th>
                             <th>Salle</th>
                             <th>Type</th>
                         </tr>
                         ${coursParJour[date].map(cours => `
                             <tr>
-                                <td>${new Date(cours.dateDebut).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${new Date(cours.dateFin).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</td>
-                                <td>${cours.nomMatiere}</td>
-                                <td>${cours.nomProf}</td>
-                                <td>${cours.nomClasse}</td>
-                                <td>${cours.eventCategory}</td>
-                                <td class="${determineTypeCours(cours.eventCategory)}">${determineTypeCours(cours.eventCategory).toUpperCase()}</td>
+                                <td>${cours.start.slice(11, 16)} - ${cours.end.slice(11, 16)}</td>
+                                <td>${cours.title}</td>
+                                <td>${cours.people}</td>
+                                <td>${cours.location}</td>
+                                <td class="${cours.calendarId}">${cours.eventCategory}</td>
                             </tr>`).join('')}
                     </table>
                 </div>`).join('')}
@@ -113,7 +134,7 @@ module.exports = {
     */
     run: async (client, interaction, args) => {
         const startDate = '2024-10-14'; // Date de début
-        const endDate = '2024-10-14'; // Date de fin
+        const endDate = '2024-10-15'; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
