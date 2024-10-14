@@ -84,11 +84,11 @@ async function generateImage(classe, coursParJour) {
                         ${coursParJour[date].map(cours => `
                             <tr>
                                 <td>${new Date(cours.dateDebut).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${new Date(cours.dateFin).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</td>
-                                <td>${cours.matiere}</td>
-                                <td>${cours.professeurs}</td>
-                                <td>${cours.sites}</td>
-                                <td>${cours.salle}</td>
-                                <td class="${determineTypeCours(cours.matiere)}">${determineTypeCours(cours.matiere).toUpperCase()}</td>
+                                <td>${cours.nomMatiere}</td>
+                                <td>${cours.nomProf}</td>
+                                <td>${cours.nomClasse}</td>
+                                <td>${cours.eventCategory}</td>
+                                <td class="${determineTypeCours(cours.eventCategory)}">${determineTypeCours(cours.eventCategory).toUpperCase()}</td>
                             </tr>`).join('')}
                     </table>
                 </div>`).join('')}
@@ -112,8 +112,8 @@ module.exports = {
     * @param {String[]} args
     */
     run: async (client, interaction, args) => {
-        const startDate = '2024-10-08'; // Date de début
-        const endDate = '2024-10-08'; // Date de fin
+        const startDate = '2024-10-14'; // Date de début
+        const endDate = '2024-10-14'; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {

@@ -24,39 +24,39 @@ async function getCalendar(startDate, endDate, classe) {
             return [];
         }
 
-        // Fonction d'aide pour nettoyer et formater les descriptions
-        function parseDescription(description) {
-            const parts = description ? description.split('<br />').map(part => part.trim()) : [];
+        // Fonction pour la date
+        function convertDateTime(input) {
+            return input.replace('T', ' ').slice(0, 16);
+        }
 
-            // Extraire les informations de la description
-            const nomProf = parts[0] || "Non spécifié";
-            const nomClasse = parts[2] || "Non spécifié";
-            const nomMatiere = parts[3] || "Non spécifié";
-            const salleCours = parts[4] || "Non spécifié";
-
-            return { nomProf, nomClasse, nomMatiere, salleCours };
+        // Couleurs pour les catégories d'événements
+        const colors = {
+            "Travaux Dirigés (TD)": "blue",
+            "Travaux Pratiques (TP)": "purple",
+            "Cours Magistraux (CM)": "red",
+            "CM": "blue",
+            "Réunion": "purple",
+            "TD": "yellow"
         }
 
         // Mapper les événements en structurant bien les données, avec prise en compte des cas où certaines infos peuvent manquer
         const calendarData = events.map((event) => {
-            const { nomProf, nomClasse, nomMatiere, salleCours } = parseDescription(event.description);
+
+            // Extraire les informations de la description
+            // TODO get group and colors : https://github.com/Escartem/EDTVelizy/blob/master/app/api/getCalendar/route.js
+
+            const group = []
+
 
             return {
                 id: event.id,
-                dateDebut: event.start,
-                dateFin: event.end,
-                jourComplet: event.allDay,
-                professeurs: nomProf,  // Nom du professeur
-                matiere: nomMatiere,   // Nom de la matière
-                classe: nomClasse,     // Nom de la classe (ex: INF1-B)
-                salle: salleCours !== "Non spécifié" ? salleCours : "Salle non précisée",  // Salle de cours, ou indication si absente
-                sites: event.sites && event.sites.length > 0 ? event.sites.join(', ') : "Site non précisé",  // Emplacement
-                categorieCours: event.eventCategory || "Type de cours non précisé",  // Catégorie du cours (ex: CM, TP)
-                modules: event.modules && event.modules.length > 0 ? event.modules.join(', ') : "Module non précisé",  // Modules associés
-                department: event.department || "Département non précisé",  // Département
-                faculty: event.faculty || "Faculté non précisée",  // Faculté
-                couleurArrierePlan: event.backgroundColor || "#FFFFFF",  // Couleur de fond par défaut
-                couleurTexte: event.textColor || "#000000",  // Couleur du texte par défaut
+                title: group[0] == "VEL" ? meta[3] : meta[2].split(" - ")[1],
+                people: group[0] == "VEL" ? [meta[0]] : ["Aucun prof"],
+                location: group[0] == "VEL" ? meta[2] : meta[1],
+                calendarId: colors[event.eventCategory],
+                start: convertDateTime(event.start),
+                end: convertDateTime(event.end),
+                full: 0
             };
         });
 
