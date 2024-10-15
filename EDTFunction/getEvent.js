@@ -20,6 +20,8 @@ async function getEvent(id) {
 
         return events;
 
+        // Vérification des events : https://github.com/Escartem/EDTVelizy/blob/master/app/api/getEvent/route.js
+
     } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
         return null;  // Retourner null en cas d'erreur
