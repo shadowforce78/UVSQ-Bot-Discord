@@ -2,17 +2,6 @@ const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar } = require("../../EDTFunction/getInfo");
 const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir installé cette bibliothèque
 
-// Fonction pour déterminer le type de cours
-function determineTypeCours(nomCours) {
-    if (nomCours.includes("CM")) return "cm";
-    if (nomCours.includes("TD")) return "td";
-    if (nomCours.includes("TP")) return "tp";
-    if (nomCours.includes('DS')) return "ds";
-    if (nomCours.includes('Projet en autonomie')) return "sae";
-    if (nomCours.includes('Integration')) return "int";
-    return "autre";
-}
-
 // Fonction pour grouper les cours par jour
 // Fonction pour grouper les cours par jour et formater les dates
 function groupCoursByDay(cours) {
