@@ -1,5 +1,6 @@
 const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar } = require("../../EDTFunction/getInfo");
+const { getEvent } = require("../../EDTFunction/getEvent");
 const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir installé cette bibliothèque
 
 // Fonction pour grouper les cours par jour
@@ -125,6 +126,12 @@ module.exports = {
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
             const calendarData = await getCalendar(startDate, endDate, classe);
+
+
+            // Pour chaque cours, récupérer les détails avec l'ID
+            for (const cours of calendarData) {
+                console.log(await getEvent(cours.id)); // Appel à getEvent avec l'ID de l'événement
+            }
 
             // Vérifier si des données de calendrier ont été retournées
             if (!calendarData || calendarData.length === 0) {

@@ -11,19 +11,14 @@ async function getEvent(id) {
         "Accept": "application/json, text/javascript, */*; q=0.01",
     };
     // Corps de la requête
-    const postData = `eventId=${id}`
+    encodedID = encodeURIComponent(id);
+    const postData = `eventId=${encodedID}`;
 
     try {
         const response = await axios.post(url, postData, { headers });
         const events = response.data;
 
-        // Vérifier s'il y a des événements
-        if (!Array.isArray(events) || events.length === 0) {
-            console.log("Aucun événement trouvé pour la période donnée.");
-            return [];
-        }
-
-        console.log(events)
+        return events;
 
     } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
