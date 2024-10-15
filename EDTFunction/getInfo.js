@@ -52,7 +52,6 @@ async function getCalendar(startDate, endDate, classe) {
             // TODO get group and colors : https://github.com/Escartem/EDTVelizy/blob/master/app/api/getCalendar/route.js
 
 
-
             const meta = event.description.replaceAll("\r\n", "").split("<br />")
 
 

@@ -62,31 +62,27 @@ async function generateImage(classe, coursParJour) {
             table {
                 border-collapse: collapse;
                 width: 100%;
-                font-size: 14px;
-                margin-bottom: 10px;
+                font-size: 12px;
             }
-            
             td, th {
                 border: 1px solid #dddddd;
-                text-align: center; /* Centrer le texte */
-                padding: 8px; /* Agrandir un peu les cellules */
+                text-align: left;
+                padding: 4px;
             }
-            
-            h2 { 
-                text-align: center; 
-                font-size: 18px; /* Agrandir le titre */
-                margin-bottom: 15px;
-            }
-            
             tr:nth-child(even) {
                 background-color: #f2f2f2;
             }
-
+            h2 { 
+                text-align: center; 
+                font-size: 18px;
+                margin-bottom: 10px;
+                color: #333;
+            }
             .blue { background-color: #00FF00; }
             .purple { background-color: #8000FF; }
             .red { background-color: #FF8080; }
             .yellow { background-color: #ffff00; }
-            .grey { background-color: #808080; }            
+            .grey { background-color: #808080; }
         </style>
     </head>
     <body>
@@ -134,7 +130,7 @@ module.exports = {
     */
     run: async (client, interaction, args) => {
         const startDate = '2024-10-14'; // Date de début
-        const endDate = '2024-10-15'; // Date de fin
+        const endDate = '2024-10-17'; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
