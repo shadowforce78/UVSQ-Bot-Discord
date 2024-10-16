@@ -31,9 +31,20 @@ async function getCalendar(startDate, endDate, classe) {
 
         // Mapper les événements en structurant bien les données
         const calendarData = events.map((event) => {
-            return { id: event.id, ...event }; // Retourne l'ID et le reste de l'événement
+            // Convertir la date et l'heure en format utilisable pour le tri
+            const startDateTime = new Date(event.start);
+            const endDateTime = new Date(event.end);
+            return {
+                ...event,
+                startTime: startDateTime,
+                endTime: endDateTime,
+            }; // Ajoute les objets de temps au retour
         });
-        return calendarData; // Retourne les données formatées
+
+        // Trier les événements par heure de début croissante
+        calendarData.sort((a, b) => a.startTime - b.startTime);
+
+        return calendarData; // Retourne les données formatées et triées
     } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
         return null; // Retourner null en cas d'erreur

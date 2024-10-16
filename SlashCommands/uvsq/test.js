@@ -1,24 +1,31 @@
 const { Client, CommandInteraction } = require("discord.js");
-const { getCalendar } = require("../../EDTFunction/getCalendar");
+const { getCalendar, getEvent } = require("../../EDTFunction/getCalendar");
 const nodeHtmlToImage = require("node-html-to-image");
 
 // Fonction pour grouper les cours par jour
 function groupCoursByDay(cours) {
-    return cours.reduce((acc, cours) => {
-        const dateCours = new Date(cours.start).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
+    const groupedCourses = {};
 
-        if (!acc[dateCours]) {
-            acc[dateCours] = [];
+    // Vérifie si cours est un tableau
+    if (!Array.isArray(cours)) {
+        console.error("Erreur : 'cours' n'est pas un tableau", cours);
+        return groupedCourses; // Retourne un objet vide si ce n'est pas un tableau
+    }
+
+    // Grouper les cours par jour
+    cours.forEach(course => {
+        const date = course.Time.split(' ')[0]; // Supposons que Time est au format "14/10/2024 09:00-11:00"
+
+        if (!groupedCourses[date]) {
+            groupedCourses[date] = [];
         }
 
-        acc[dateCours].push(cours);
-        return acc;
-    }, {});
+        groupedCourses[date].push(course);
+    });
+
+    return groupedCourses; // Retourner les cours groupés
 }
+
 
 // Fonction pour générer l'image de l'emploi du temps
 async function generateImage(classe, coursParJour) {
