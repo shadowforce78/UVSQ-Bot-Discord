@@ -8,7 +8,7 @@ async function getCalendar(startDate, endDate, classe) {
     // Headers pour la requête POST
     const headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        Accept: "application/json, text/javascript, */*; q=0.01",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
     };
 
     const group = "VEL@INF1-B2@103".split("@");

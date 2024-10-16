@@ -8,6 +8,7 @@ const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir i
 function groupCoursByDay(cours) {
     return cours.reduce((acc, cours) => {
         // Convertir la date de début du cours en format JJ/MM/AAAA
+
         const dateCours = new Date(cours.start).toLocaleDateString("fr-FR", {
             day: "2-digit",
             month: "2-digit",
@@ -117,21 +118,23 @@ module.exports = {
     * @param {String[]} args
     */
     run: async (client, interaction, args) => {
-        const startDate = '2024-10-16'; // Date de début
-        const endDate = '2024-10-16'; // Date de fin
+        const startDate = '2024-10-14'; // Date de début
+        const endDate = '2024-10-14'; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
             const calendarData = await getCalendar(startDate, endDate, classe);
-
-            // Pour chaque cours, récupérer les détails avec l'ID
-            for (const cours of calendarData) {
-                const verifiedCourse = await getEvent(cours.id);
-            }
             // Vérifier si des données de calendrier ont été retournées
             if (!calendarData || calendarData.length === 0) {
                 return interaction.followUp({ content: "Aucun événement trouvé pour cette date.", ephemeral: true });
+            }
+
+            // Pour chaque cours, obtenir les informations détaillées
+            for (const cours of calendarData) {
+                const eventDetails = await getEvent(cours.id);
+                // Vérifier si des détails d'événement ont été retournés
+                // console.log(eventDetails);
             }
 
             // Grouper les cours par jour
