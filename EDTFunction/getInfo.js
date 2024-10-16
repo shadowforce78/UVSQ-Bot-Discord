@@ -49,7 +49,6 @@ async function getCalendar(startDate, endDate, classe) {
         const calendarData = events.map((event) => {
 
             // Extraire les informations de la description
-            // TODO get group and colors : https://github.com/Escartem/EDTVelizy/blob/master/app/api/getCalendar/route.js
 
 
             const meta = event.description.replaceAll("\r\n", "").split("<br />")
