@@ -11,7 +11,6 @@ async function getEvent(id) {
 
     try {
         const response = await axios.post(url, postData, { headers });
-        console.log("Réponse brute de l'API:", response.data);
 
         const events = response.data.elements; // Changez ici pour récupérer les éléments
 
