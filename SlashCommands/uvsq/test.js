@@ -135,26 +135,37 @@ module.exports = {
 
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
-            const calendarData = await getCalendar(startDate, endDate, classe);
+            const calendarRes = await getCalendar(startDate, endDate, classe);
+            
+            // Map calendarRes to get the event details
+            const eventDetails = await Promise.all(
+                calendarRes.map((event) => getEvent(event.id))
+            );
+
+            const eventDetailsString = eventDetails.map((event) => {
+                return `${event.title} - ${event.description}`;
+            });
+
+            console.log(eventDetailsString);
 
             // Vérifier si des données de calendrier ont été retournées
-            if (!calendarData || calendarData.length === 0) {
-                return interaction.followUp({
-                    content: "Aucun événement trouvé pour cette date.",
-                    ephemeral: true,
-                });
-            }
+            // if (!calendarData || calendarData.length === 0) {
+            //     return interaction.followUp({
+            //         content: "Aucun événement trouvé pour cette date.",
+            //         ephemeral: true,
+            //     });
+            // }
 
             // Regrouper les cours par jour
-            const coursParJour = groupCoursByDay(calendarData);
+            // const coursParJour = groupCoursByDay(calendarData);
 
             // Générer l'image
-            await generateImage(classe, coursParJour);
+            // await generateImage(classe, coursParJour);
 
             // Répondre à l'utilisateur avec un message de confirmation
             interaction.followUp({
                 content: "L'image de l'emploi du temps a été générée avec succès !",
-                files: ["./image.png"],
+                // files: ["./image.png"],
                 ephemeral: true,
             });
         } catch (err) {

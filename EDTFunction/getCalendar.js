@@ -35,7 +35,7 @@ async function getCalendar(startDate, endDate, classe) {
             const startDateTime = new Date(event.start);
             const endDateTime = new Date(event.end);
             return {
-                ...event,
+                id: event.id,
                 startTime: startDateTime,
                 endTime: endDateTime,
             }; // Ajoute les objets de temps au retour
