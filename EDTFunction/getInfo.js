@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 // Fonction pour récupérer et formater l'emploi du temps
 async function getCalendar(startDate, endDate, classe) {
@@ -8,7 +8,7 @@ async function getCalendar(startDate, endDate, classe) {
     // Headers pour la requête POST
     const headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
+        Accept: "application/json, text/javascript, */*; q=0.01",
     };
 
     const group = "VEL@INF1-B2@103".split("@");
@@ -16,7 +16,7 @@ async function getCalendar(startDate, endDate, classe) {
         group.push("103");
     }
     // Corps de la requête
-    const postData = `start=${startDate}&end=${endDate}&resType=${group[2]}&calView=agendaDay&federationIds%5B%5D=${group[1]}&colourScheme=3`
+    const postData = `start=${startDate}&end=${endDate}&resType=${group[2]}&calView=agendaDay&federationIds%5B%5D=${group[1]}&colourScheme=3`;
 
     try {
         const response = await axios.post(url, postData, { headers });
@@ -30,7 +30,7 @@ async function getCalendar(startDate, endDate, classe) {
 
         // Fonction pour la date
         function convertDateTime(input) {
-            return input.replace('T', ' ').slice(0, 16);
+            return input.replace("T", " ").slice(0, 16);
         }
 
         // Couleurs pour les catégories d'événements
@@ -38,21 +38,18 @@ async function getCalendar(startDate, endDate, classe) {
             "Travaux Dirigés (TD)": "blue",
             "Travaux Pratiques (TP)": "purple",
             "Cours Magistraux (CM)": "red",
-            "CM": "blue",
-            "Réunion": "purple",
-            "TD": "yellow",
+            CM: "blue",
+            Réunion: "purple",
+            TD: "yellow",
             "Projet en autonomie": "grey",
-            "Integration": "yellow",
-        }
+            Integration: "yellow",
+        };
 
         // Mapper les événements en structurant bien les données, avec prise en compte des cas où certaines infos peuvent manquer
         const calendarData = events.map((event) => {
-
             // Extraire les informations de la description
 
-
-            const meta = event.description.replaceAll("\r\n", "").split("<br />")
-
+            const meta = event.description.replaceAll("\r\n", "").split("<br />");
 
             return {
                 id: event.id,
@@ -68,13 +65,12 @@ async function getCalendar(startDate, endDate, classe) {
         });
 
         // Sort
-        calendarData.sort((a, b) => new Date(a.start) - new Date(b.start))
+        calendarData.sort((a, b) => new Date(a.start) - new Date(b.start));
 
-        return calendarData;  // Retourne les données formatées
-
+        return calendarData; // Retourne les données formatées
     } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
-        return null;  // Retourner null en cas d'erreur
+        return null; // Retourner null en cas d'erreur
     }
 }
 
