@@ -1,28 +1,21 @@
 const { Client, CommandInteraction } = require("discord.js");
-const { getCalendar } = require("../../EDTFunction/getInfo");
-const { getEvent } = require("../../EDTFunction/getEvent");
-const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir installé cette bibliothèque
+const { getCalendar } = require("../../EDTFunction/getCalendar");
+const nodeHtmlToImage = require("node-html-to-image");
 
 // Fonction pour grouper les cours par jour
-// Fonction pour grouper les cours par jour et formater les dates
 function groupCoursByDay(cours) {
     return cours.reduce((acc, cours) => {
-        // Convertir la date de début du cours en format JJ/MM/AAAA
-
         const dateCours = new Date(cours.start).toLocaleDateString("fr-FR", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
         });
 
-        // Si ce jour n'existe pas encore dans l'accumulateur, l'initialiser
         if (!acc[dateCours]) {
             acc[dateCours] = [];
         }
 
-        // Ajouter le cours dans le tableau correspondant à cette date
         acc[dateCours].push(cours);
-
         return acc;
     }, {});
 }
@@ -67,17 +60,14 @@ async function generateImage(classe, coursParJour) {
                 margin-bottom: 10px;
                 color: #333;
             }
-            .blue { background-color: #00FF00; }
-            .purple { background-color: #8000FF; }
-            .red { background-color: #FF8080; }
-            .yellow { background-color: #ffff00; }
-            .grey { background-color: #808080; }
         </style>
     </head>
     <body>
         <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
         <div class="container">
-            ${Object.keys(coursParJour).map(date => `
+            ${Object.keys(coursParJour)
+            .map(
+                (date) => `
                 <div class="day-container">
                     <h2>${date}</h2>
                     <table>
@@ -88,76 +78,84 @@ async function generateImage(classe, coursParJour) {
                             <th>Salle</th>
                             <th>Type</th>
                         </tr>
-                        ${coursParJour[date].map(cours => `
-                            <tr>
-                                <td>${cours.start.slice(11, 16)} - ${cours.end.slice(11, 16)}</td>
-                                <td>${cours.title}</td>
-                                <td>${cours.people}</td>
-                                <td>${cours.location}</td>
-                                <td class="${cours.calendarId}">${cours.eventCategory}</td>
-                            </tr>`).join('')}
+                        ${coursParJour[date]
+                        .map((cours) => {
+                            const time = new Date(cours.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const moduleName = cours.modules ? cours.modules[0] : "N/A";
+                            const staff = cours.description.split('\r\n')[0] || "N/A"; // Récupère le nom du professeur à partir de la description
+                            const room = cours.sites ? cours.sites[0] : "N/A"; // Prend la première salle
+                            const eventCategory = cours.eventCategory || "N/A";
+
+                            return `
+                                <tr>
+                                    <td>${time}</td>
+                                    <td>${moduleName}</td>
+                                    <td>${staff}</td>
+                                    <td>${room}</td>
+                                    <td>${eventCategory}</td>
+                                </tr>
+                            `;
+                        })
+                        .join("")}
                     </table>
-                </div>`).join('')}
+                </div>`
+            )
+            .join("")}
         </div>
     </body>
     </html>
     `;
 
-    return nodeHtmlToImage({ output: './image.png', html });
+    return nodeHtmlToImage({ output: "./image.png", html });
 }
 
 module.exports = {
     name: "test",
     description: "Ceci est une commande permettant de tester des choses",
+
     userperm: [""],
     botperm: [""],
     /**
-    *
-    * @param {Client} client
-    * @param {CommandInteraction} interaction
-    * @param {String[]} args
-    */
+     *
+     * @param {Client} client
+     * @param {CommandInteraction} interaction
+     * @param {String[]} args
+     */
     run: async (client, interaction, args) => {
-        const startDate = '2024-10-14'; // Date de début
-        const endDate = '2024-10-14'; // Date de fin
+        const startDate = "2024-10-14"; // Date de début
+        const endDate = "2024-10-14"; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
             const calendarData = await getCalendar(startDate, endDate, classe);
+
             // Vérifier si des données de calendrier ont été retournées
             if (!calendarData || calendarData.length === 0) {
-                return interaction.followUp({ content: "Aucun événement trouvé pour cette date.", ephemeral: true });
+                return interaction.followUp({
+                    content: "Aucun événement trouvé pour cette date.",
+                    ephemeral: true,
+                });
             }
 
-            // Pour chaque cours, obtenir les informations détaillées
-            for (const cours of calendarData) {
-                const eventDetails = await getEvent(cours.id);
-                // Vérifier si des détails d'événement ont été retournés
-                if (Object.keys(eventDetails).length > 0) { // Vérifie si l'objet n'est pas vide
-                    console.log(eventDetails)
-                    console.log(JSON.stringify(eventDetails, null, 2)); // Affiche l'objet en format JSON lisible
-                } else {
-                    console.log(`Aucun événement trouvé pour l'ID: ${cours.id}`); // Message si aucun événement n'est trouvé
-                }
-            }
-            
-
-            // Grouper les cours par jour
+            // Regrouper les cours par jour
             const coursParJour = groupCoursByDay(calendarData);
 
-            // Générer l'image de l'emploi du temps
+            // Générer l'image
             await generateImage(classe, coursParJour);
 
-            // Envoyer un message de succès avec l'image générée
-            // await interaction.followUp({ content: "Image de l'emploi du temps générée avec succès !", files: ['./image.png'], ephemeral: true });
-            await interaction.followUp({ 
-                content: "Test réussi !",
-            })
-
+            // Répondre à l'utilisateur avec un message de confirmation
+            interaction.followUp({
+                content: "L'image de l'emploi du temps a été générée avec succès !",
+                files: ["./image.png"],
+                ephemeral: true,
+            });
         } catch (err) {
             console.error(err); // Afficher l'erreur dans la console pour le débogage
-            interaction.followUp({ content: "Erreur lors de la récupération du calendrier.", ephemeral: true });
+            interaction.followUp({
+                content: "Erreur lors de la récupération du calendrier.",
+                ephemeral: true,
+            });
         }
-    }
+    },
 };

@@ -1,6 +1,4 @@
 const { Client, CommandInteraction } = require("discord.js");
-const { getCalendar } = require("../../EDTFunction/getInfo");
-const { getEvent } = require("../../EDTFunction/getEvent");
 const nodeHtmlToImage = require('node-html-to-image'); // Assurez-vous d'avoir installé cette bibliothèque
 
 // Fonction pour grouper les cours par jour
