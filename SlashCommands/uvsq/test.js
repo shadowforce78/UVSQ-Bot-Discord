@@ -134,8 +134,14 @@ module.exports = {
             for (const cours of calendarData) {
                 const eventDetails = await getEvent(cours.id);
                 // Vérifier si des détails d'événement ont été retournés
-                // console.log(eventDetails);
+                if (Object.keys(eventDetails).length > 0) { // Vérifie si l'objet n'est pas vide
+                    console.log(eventDetails)
+                    console.log(JSON.stringify(eventDetails, null, 2)); // Affiche l'objet en format JSON lisible
+                } else {
+                    console.log(`Aucun événement trouvé pour l'ID: ${cours.id}`); // Message si aucun événement n'est trouvé
+                }
             }
+            
 
             // Grouper les cours par jour
             const coursParJour = groupCoursByDay(calendarData);
@@ -144,7 +150,10 @@ module.exports = {
             await generateImage(classe, coursParJour);
 
             // Envoyer un message de succès avec l'image générée
-            await interaction.followUp({ content: "Image de l'emploi du temps générée avec succès !", files: ['./image.png'], ephemeral: true });
+            // await interaction.followUp({ content: "Image de l'emploi du temps générée avec succès !", files: ['./image.png'], ephemeral: true });
+            await interaction.followUp({ 
+                content: "Test réussi !",
+            })
 
         } catch (err) {
             console.error(err); // Afficher l'erreur dans la console pour le débogage
