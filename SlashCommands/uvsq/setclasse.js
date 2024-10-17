@@ -21,7 +21,7 @@ module.exports = {
    */
   run: async (client, interaction, args) => {
     const classe = [
-      // Info 
+      // Info
       "INF1-A1",
       "INF1-A2",
       "INF1-B1",
@@ -58,8 +58,7 @@ module.exports = {
       "GEII1-TP1",
       "GEII1-TP2",
       "GEII1-TP3",
-    ]
-
+    ];
 
     const classeUser = interaction.options.getString("classe");
 
@@ -70,15 +69,20 @@ module.exports = {
         classe: classeUser,
       });
     } else {
-      await schemaClasse.findOneAndUpdate({ id: interaction.user.id }, {
-        classe: classeUser,
-      });
+      await schemaClasse.findOneAndUpdate(
+        { id: interaction.user.id },
+        {
+          classe: classeUser,
+        }
+      );
     }
 
     if (!classe.includes(classeUser)) {
       return interaction.followUp({
         content:
-          "La classe n'est pas valide\nVeuillez choisir une classe parmi les suivantes : \n" + classe.join(", ") + "(si votre classe n'est pas dans la liste, veuillez contacter `saumondeluxe` pour l'ajouter)",
+          "La classe n'est pas valide\nVeuillez choisir une classe parmi les suivantes : \n`" +
+          classe.join(",\n") +
+          "`\n(si votre classe n'est pas dans la liste, veuillez contacter `saumondeluxe` pour l'ajouter)",
       });
     } else {
       interaction.followUp({
