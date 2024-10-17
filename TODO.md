@@ -1,6 +1,0 @@
-- [ ] Adapter le html pour trois jours (adapté la grille pour 1 2 3 ou 4 jours)
-- [ ] Ajouter le système par semaine (configreminder)
-- [ ] Ajouter deux bouttons sous l'image pour changer le jour (précédent et suivant)
-- [ ] Regler le problèmes des doubles cours (2024-10-17 deux cours en même temps mais inversé a la moitié)
-- [x] Regler la fonction group dans getCalendar.js
-- [x] Verifier pour tout types de classe (pas que info)
