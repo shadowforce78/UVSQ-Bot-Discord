@@ -54,10 +54,16 @@ module.exports = {
         "Une des dates fournies n'est pas valide. Vérifie que tu utilises un format correct et des dates existantes."
       );
     }
-
-    // Si plus de 4 jours sont demandés, on refuse la requête
     const start = new Date(startDate);
     const end = new Date(endDate);
+
+    // Si la date de fin est avant la date de début, on refuse la requête
+    if (end < start) {
+      return interaction.followUp(
+        "La date de fin ne peut pas être avant la date de début."
+      );
+    }
+    // Si plus de 4 jours sont demandés, on refuse la requête
     const diffTime = Math.abs(end - start);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays >= 4) {

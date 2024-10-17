@@ -18,21 +18,24 @@ async function generateImage(classe, coursParJourArray) {
     <html>
     <head>
         <style>
-            body {
+                        body {
                 font-family: Arial, sans-serif;
             }
             .container {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                justify-items: center;
+                margin: 20px;
             }
             .day-container {
                 margin: 10px;
-                padding: 10px;
+                padding: 20px;
                 border: 1px solid #dddddd;
                 border-radius: 10px;
-                width: 80%;
+                width: 100%;
+                box-sizing: border-box;
+                height: auto;
             }
             table {
                 border-collapse: collapse;
