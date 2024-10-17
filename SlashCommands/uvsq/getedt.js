@@ -54,6 +54,19 @@ module.exports = {
         "Une des dates fournies n'est pas valide. Vérifie que tu utilises un format correct et des dates existantes."
       );
     }
+
+    // Si plus de 4 jours sont demandés, on refuse la requête
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays >= 4) {
+      return interaction.followUp(
+        "La durée de l'emploi du temps ne peut pas dépasser 4 jours."
+      );
+    }
+
+
     const classe = "INF1-B"; // Classe à spécifier
 
     try {
