@@ -74,6 +74,15 @@ async function generateImage(classe, coursParJourArray) {
             .event-category-REUNION {
                 background-color: #D7E1FF;
             }
+            .event-category-projetutore{
+                background-color: rgb(255 0 128);
+            }
+            .event-category-divers{
+                background-color: rgb(128 255 255);
+            }
+            .event-category-DS{
+                background-color: rgb(255 0 255);
+            }
         </style>
     </head>
     <body>
@@ -124,6 +133,12 @@ async function generateImage(classe, coursParJourArray) {
                                         eventCategoryClass = "event-category-INT";
                                     } else if (eventCategory.includes("Reunion")) {
                                         eventCategoryClass = "event-category-REUNION";
+                                    } else if (eventCategory.includes("projet tutore")) {
+                                        eventCategoryClass = "event-category-projetutore";
+                                    } else if (eventCategory.includes("Divers")) {
+                                        eventCategoryClass = "event-category-divers";
+                                    } else if (eventCategory.includes("DS")) {
+                                        eventCategoryClass = "event-category-DS";
                                     }
 
                                     return `

@@ -11,7 +11,7 @@ async function getCalendar(startDate, endDate, classe) {
         "Accept": "application/json, text/javascript, */*; q=0.01",
     };
 
-    const group = "VEL@INF1-B2@103".split("@");
+    const group = `VEL@${classe}@103`.split("@");
     if (group.length === 2) {
         group.push("103");
     }
