@@ -67,6 +67,6 @@ module.exports = {
       }
     );
 
-    interaction.followUp({ embeds: [embed], components: [row] });
+    return interaction.followUp({ content: "Cette commande n'est pas fonctionnelle, elle est en cours de développement", embeds: [embed], components: [row] });
   },
 };

@@ -15,10 +15,16 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, interaction, args) => {
+
+        if (interaction.user.id != "918916801994309752") {
+            return interaction.followUp({
+                content: "Vous n'avez pas la permission d'utiliser cette commande (seul le developpeur peut l'utiliser)",
+            });
+        }
+
         const startDate = "2024-10-17"; // Date de début
         const endDate = "2024-10-17"; // Date de fin
-        // const classe = "INF1-B2"; // Classe à spécifier
-        const classe = "MMI1-A2"
+        const classe = "INF1-B2"; // Classe à spécifier
 
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
