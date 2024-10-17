@@ -53,7 +53,24 @@ async function generateImage(classe, coursParJourArray) {
                 margin-bottom: 10px;
                 color: #333;
             }
-            
+            .event-category-TP {
+                background-color: rgb(128 0 255);
+            }
+            .event-category-TD {
+                background-color: rgb(255 0 255);
+            }
+            .event-category-CM {
+                background-color: rgb(255 128 128);
+            }
+            .event-category-SAE {
+                background-color: rgb(128 128 128);
+            }
+            .event-category-INT {
+                background-color: rgb(255 255 0);
+            }
+            .event-category-REUNION {
+                background-color: #D7E1FF;
+            }
         </style>
     </head>
     <body>
@@ -74,29 +91,47 @@ async function generateImage(classe, coursParJourArray) {
                         </tr>
                         ${Object.keys(coursParJour[date])
                         .map((courseKey) => {
-                            const cours = Array.isArray(coursParJour[date][courseKey])
+                            const cours = Array.isArray(
+                                coursParJour[date][courseKey]
+                            )
                                 ? coursParJour[date][courseKey]
                                 : [coursParJour[date][courseKey]];
 
                             return cours
-                            .map((coursDetail) => {
-                                const time = coursDetail.Time || "N/A";
-                                const moduleName = coursDetail.Module || "N/A";
-                                const staff = coursDetail.Staff || "N/A";
-                                const room = coursDetail.Room || "N/A";
-                                const eventCategory = coursDetail['Event category'] || "N/A";
+                                .map((coursDetail) => {
+                                    const time = coursDetail.Time || "N/A";
+                                    const moduleName = coursDetail.Module || "N/A";
+                                    const staff = coursDetail.Staff || "N/A";
+                                    const room = coursDetail.Room || "N/A";
+                                    const eventCategory =
+                                        coursDetail["Event category"] || "N/A";
 
-                                return `
+                                    let eventCategoryClass = "";
+                                    if (eventCategory.includes("TP")) {
+                                        eventCategoryClass = "event-category-TP";
+                                    } else if (eventCategory.includes("TD")) {
+                                        eventCategoryClass = "event-category-TD";
+                                    } else if (eventCategory.includes("CM")) {
+                                        eventCategoryClass = "event-category-CM";
+                                    } else if (eventCategory.includes("Projet en autonomie")) {
+                                        eventCategoryClass = "event-category-SAE";
+                                    } else if (eventCategory.includes("Integration")) {
+                                        eventCategoryClass = "event-category-INT";
+                                    } else if (eventCategory.includes("Reunion")) {
+                                        eventCategoryClass = "event-category-REUNION";
+                                    }
+
+                                    return `
                                     <tr>
                                         <td>${time}</td>
                                         <td>${moduleName}</td>
                                         <td>${staff}</td>
                                         <td>${room}</td>
-                                        <td>${eventCategory}</td>
+                                        <td class="${eventCategoryClass}">${eventCategory}</td>
                                     </tr>
                                 `;
-                            })
-                            .join("");
+                                })
+                                .join("");
                         })
                         .join("")}
                     </table>
@@ -110,7 +145,5 @@ async function generateImage(classe, coursParJourArray) {
 
     return nodeHtmlToImage({ output: "./image.png", html });
 }
-
-
 
 module.exports = { generateImage };

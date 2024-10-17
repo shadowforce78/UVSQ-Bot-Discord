@@ -16,7 +16,7 @@ module.exports = {
      */
     run: async (client, interaction, args) => {
         const startDate = "2024-10-14"; // Date de début
-        const endDate = "2024-10-19"; // Date de fin
+        const endDate = "2024-10-14"; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {
