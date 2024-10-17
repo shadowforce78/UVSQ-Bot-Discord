@@ -2,5 +2,5 @@
 - [ ] Adapter le html pour trois jours (adapté la grille pour 1 2 3 ou 4 jours)
 - [ ] Ajouter deux bouttons sous l'image pour changer le jour (précédent et suivant)
 - [ ] Ajouter le système par semaine (configreminder)
-- [ ] Verifier pour tout types de classe (pas que info)
+- [x] Verifier pour tout types de classe (pas que info)
 - [ ] Regler la fonction group dans getCalendar.js

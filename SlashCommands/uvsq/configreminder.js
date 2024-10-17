@@ -4,6 +4,7 @@ const {
   MessageEmbed,
   MessageActionRow,
 } = require("discord.js");
+const schemaClasse = require("../../schema/classe");
 module.exports = {
   name: "config",
   description: "Configure les rappels automatiques de l'emploi du temps",
@@ -15,10 +16,17 @@ module.exports = {
    * @param {String[]} args
    */
   run: async (client, interaction, args) => {
+    const data = await schemaClasse.findOne({ guild: interaction.guildId });
+    if (!data) {
+      return interaction.followUp({
+        content: "Aucune classe n'a été définie pour ce serveur",
+      });
+    }
+
     const embed = new MessageEmbed()
       .setTitle("Configuration des rappels")
       .setDescription(
-        "Configurez les rappels automatiques de votre emploi du temps",
+        "Configurez les rappels automatiques de votre emploi du temps"
       )
       .addFields(
         {
@@ -35,7 +43,7 @@ module.exports = {
           name: "3️⃣ - Désactiver les rappels",
           value: "Désactive les rappels automatiques",
           inline: false,
-        },
+        }
       );
 
     const row = new MessageActionRow().addComponents(
@@ -56,23 +64,8 @@ module.exports = {
         label: "3️⃣",
         style: "DANGER",
         customId: "disable",
-      },
+      }
     );
-
-    const today = new Date();
-    const day = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    let dateDebut;
-
-    if (day !== 1) { // If today is not a Monday
-      const diff = today.getDate() - day + 1;
-      dateDebut = new Date(today.setDate(diff));
-    } else {
-      dateDebut = today;
-    }
-
-    dateDebut = dateDebut.toISOString().slice(0, 10); // Format: YYYY-MM-DD
-
-    console.log(dateDebut);
 
     interaction.followUp({ embeds: [embed], components: [row] });
   },
