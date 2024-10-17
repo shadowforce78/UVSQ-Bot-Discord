@@ -1,6 +1,6 @@
 const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar, getEvent } = require("../../EDTFunction/getCalendar");
-const nodeHtmlToImage = require("node-html-to-image");
+const { generateImage } = require('../../EDTFunction/generateImage');
 
 // Fonction pour grouper les cours par jour
 function groupCoursByDay(cours) {
@@ -24,96 +24,6 @@ function groupCoursByDay(cours) {
     });
 
     return groupedCourses; // Retourner les cours groupés
-}
-
-
-// Fonction pour générer l'image de l'emploi du temps
-async function generateImage(classe, coursParJour) {
-    const html = `
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-            }
-            .container {
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-            }
-            .day-container {
-                flex: 1;
-                margin: 10px;
-                padding: 10px;
-                border: 1px solid #dddddd;
-                border-radius: 10px;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                font-size: 12px;
-            }
-            td, th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 4px;
-            }
-            tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            h2 {
-                text-align: center;
-                font-size: 18px;
-                margin-bottom: 10px;
-                color: #333;
-            }
-        </style>
-    </head>
-    <body>
-        <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
-        <div class="container">
-            ${Object.keys(coursParJour)
-            .map(
-                (date) => `
-                <div class="day-container">
-                    <h2>${date}</h2>
-                    <table>
-                        <tr>
-                            <th>Heure</th>
-                            <th>Matière</th>
-                            <th>Professeur</th>
-                            <th>Salle</th>
-                            <th>Type</th>
-                        </tr>
-                        ${coursParJour[date]
-                        .map((cours) => {
-                            const time = new Date(cours.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                            const moduleName = cours.modules ? cours.modules[0] : "N/A";
-                            const staff = cours.description.split('\r\n')[0] || "N/A"; // Récupère le nom du professeur à partir de la description
-                            const room = cours.sites ? cours.sites[0] : "N/A"; // Prend la première salle
-                            const eventCategory = cours.eventCategory || "N/A";
-
-                            return `
-                                <tr>
-                                    <td>${time}</td>
-                                    <td>${moduleName}</td>
-                                    <td>${staff}</td>
-                                    <td>${room}</td>
-                                    <td>${eventCategory}</td>
-                                </tr>
-                            `;
-                        })
-                        .join("")}
-                    </table>
-                </div>`
-            )
-            .join("")}
-        </div>
-    </body>
-    </html>
-    `;
-
-    return nodeHtmlToImage({ output: "./image.png", html });
 }
 
 module.exports = {
@@ -144,52 +54,37 @@ module.exports = {
 
             const eventDetailsArray = Object.values(eventDetails);
 
-            eventDetailsArray.forEach(dayObject => {
-                // Récupérer la date (clé principale)
-                const date = Object.keys(dayObject)[0];
+            // eventDetailsArray.forEach(dayObject => {
+            //     // Récupérer la date (clé principale)
+            //     const date = Object.keys(dayObject)[0];
 
-                // Récupérer les cours pour cette date
-                const courses = dayObject[date];
-
-                console.log(`Date : ${date}`);
-
-                // Itérer sur les cours et afficher le contenu de l'array
-                Object.keys(courses).forEach(course => {
-                    const courseDetails = courses[course]; // Récupérer l'array
-                    console.log(`Cours : ${course}`);
-
-                    // Afficher chaque élément de l'array (détails du cours)
-                    courseDetails.forEach(detail => {
-                        console.log(`  - Time : ${detail['Time'] || 'N/A'}`);
-                        console.log(`  - Module : ${detail['Module'] || 'N/A'}`);
-                        console.log(`  - Group : ${detail['Group'] || 'N/A'}`);
-                        console.log(`  - Room : ${detail['Room'] || 'N/A'}`);
-                        console.log(`  - Event Category : ${detail['Event category'] || 'N/A'}`);
-                        console.log(`  - Prof : ${detail['Staff'] || 'N/A'}`);
-                    });
-                });
-            });
+            //     // Récupérer les cours pour cette date
+            //     const courses = dayObject[date];
 
 
+            //     // Itérer sur les cours et afficher le contenu de l'array
+            //     Object.keys(courses).forEach(course => {
+            //         const courseDetails = courses[course]; // Récupérer l'array
+            //         console.log(`Cours : ${course}`);
 
-            // Vérifier si des données de calendrier ont été retournées
-            // if (!calendarData || calendarData.length === 0) {
-            //     return interaction.followUp({
-            //         content: "Aucun événement trouvé pour cette date.",
-            //         ephemeral: true,
+            //         // Afficher chaque élément de l'array (détails du cours)
+            //         courseDetails.forEach(detail => {
+            //             console.log(`  - Time : ${detail['Time'] || 'N/A'}`);
+            //             console.log(`  - Module : ${detail['Module'] || 'N/A'}`);
+            //             console.log(`  - Prof : ${detail['Staff'] || 'N/A'}`);
+            //             console.log(`  - Room : ${detail['Room'] || 'N/A'}`);
+            //             console.log(`  - Event Category : ${detail['Event category'] || 'N/A'}`);
+            //         });
             //     });
-            // }
-
-            // Regrouper les cours par jour
-            // const coursParJour = groupCoursByDay(calendarData);
+            // });
 
             // Générer l'image
-            // await generateImage(classe, coursParJour);
+            await generateImage(classe, eventDetailsArray);
 
             // Répondre à l'utilisateur avec un message de confirmation
             interaction.followUp({
                 content: "L'image de l'emploi du temps a été générée avec succès !",
-                // files: ["./image.png"],
+                files: ["./image.png"],
                 ephemeral: true,
             });
         } catch (err) {
