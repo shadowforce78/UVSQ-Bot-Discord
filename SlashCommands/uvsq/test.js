@@ -2,30 +2,6 @@ const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar, getEvent } = require("../../EDTFunction/getCalendar");
 const { generateImage } = require('../../EDTFunction/generateImage');
 
-// Fonction pour grouper les cours par jour
-function groupCoursByDay(cours) {
-    const groupedCourses = {};
-
-    // Vérifie si cours est un tableau
-    if (!Array.isArray(cours)) {
-        console.error("Erreur : 'cours' n'est pas un tableau", cours);
-        return groupedCourses; // Retourne un objet vide si ce n'est pas un tableau
-    }
-
-    // Grouper les cours par jour
-    cours.forEach(course => {
-        const date = course.Time.split(' ')[0]; // Supposons que Time est au format "14/10/2024 09:00-11:00"
-
-        if (!groupedCourses[date]) {
-            groupedCourses[date] = [];
-        }
-
-        groupedCourses[date].push(course);
-    });
-
-    return groupedCourses; // Retourner les cours groupés
-}
-
 module.exports = {
     name: "test",
     description: "Ceci est une commande permettant de tester des choses",
@@ -40,7 +16,7 @@ module.exports = {
      */
     run: async (client, interaction, args) => {
         const startDate = "2024-10-14"; // Date de début
-        const endDate = "2024-10-14"; // Date de fin
+        const endDate = "2024-10-19"; // Date de fin
         const classe = "INF1-B"; // Classe à spécifier
 
         try {

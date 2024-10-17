@@ -1,7 +1,19 @@
 const nodeHtmlToImage = require("node-html-to-image");
 
 // Fonction pour générer l'image de l'emploi du temps
-async function generateImage(classe, eventDetailsArray) {
+async function generateImage(classe, coursParJourArray) {
+    // Fusionner les objets du tableau en un seul objet
+    const coursParJour = coursParJourArray.reduce((acc, curr) => {
+        const dateKey = Object.keys(curr)[0];
+        if (!acc[dateKey]) {
+            acc[dateKey] = {};
+        }
+        Object.assign(acc[dateKey], curr[dateKey]);
+        return acc;
+    }, {});
+
+    // console.log("Data after merging:", coursParJour); // Debug merged data
+
     const html = `
     <html>
     <head>
@@ -11,15 +23,16 @@ async function generateImage(classe, eventDetailsArray) {
             }
             .container {
                 display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
             .day-container {
-                flex: 1;
                 margin: 10px;
                 padding: 10px;
                 border: 1px solid #dddddd;
                 border-radius: 10px;
+                width: 80%;
             }
             table {
                 border-collapse: collapse;
@@ -40,58 +53,56 @@ async function generateImage(classe, eventDetailsArray) {
                 margin-bottom: 10px;
                 color: #333;
             }
+            
         </style>
     </head>
     <body>
         <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
         <div class="container">
-            ${eventDetailsArray.map(dayObject => {
-                const date = Object.keys(dayObject)[0]; // Récupère la date
-                const courseObj = dayObject[date]; // Récupère l'objet contenant les modules
+            ${Object.keys(coursParJour)
+            .map(
+                (date) => `
+                <div class="day-container">
+                    <h2>${date}</h2>
+                    <table>
+                        <tr>
+                            <th>Heure</th>
+                            <th>Matière</th>
+                            <th>Professeur</th>
+                            <th>Salle</th>
+                            <th>Type</th>
+                        </tr>
+                        ${Object.keys(coursParJour[date])
+                        .map((courseKey) => {
+                            const cours = Array.isArray(coursParJour[date][courseKey])
+                                ? coursParJour[date][courseKey]
+                                : [coursParJour[date][courseKey]];
 
-                // Itérer sur chaque module (clé)
-                return `
-                    <div class="day-container">
-                        <h2>${date}</h2>
-                        <table>
-                            <tr>
-                                <th>Heure</th>
-                                <th>Matière</th>
-                                <th>Professeur</th>
-                                <th>Salle</th>
-                                <th>Type</th>
-                            </tr>
-                            ${Object.keys(courseObj).map(moduleName => {
-                                const courses = courseObj[moduleName]; // Récupère le tableau des cours pour ce module
+                            return cours
+                            .map((coursDetail) => {
+                                const time = coursDetail.Time || "N/A";
+                                const moduleName = coursDetail.Module || "N/A";
+                                const staff = coursDetail.Staff || "N/A";
+                                const room = coursDetail.Room || "N/A";
+                                const eventCategory = coursDetail['Event category'] || "N/A";
 
-                                // Vérifier que "courses" est un tableau
-                                if (!Array.isArray(courses)) {
-                                    console.error(`Erreur : les cours pour le module ${moduleName} ne sont pas un tableau`, courses);
-                                    return ''; // Ignorer si ce n'est pas un tableau
-                                }
-
-                                // Itérer sur chaque cours pour ce module
-                                return courses.map(detail => {
-                                    const time = detail['Time'] || 'N/A';
-                                    const module = detail['Module'] || moduleName; // Utiliser le module comme fallback
-                                    const staff = detail['Staff'] || 'N/A';
-                                    const room = detail['Room'] || 'N/A';
-                                    const eventCategory = detail['Event category'] || 'N/A';
-
-                                    return `
-                                        <tr>
-                                            <td>${time}</td>
-                                            <td>${module}</td>
-                                            <td>${staff}</td>
-                                            <td>${room}</td>
-                                            <td>${eventCategory}</td>
-                                        </tr>
-                                    `;
-                                }).join('');
-                            }).join('')}
-                        </table>
-                    </div>`;
-            }).join('')}
+                                return `
+                                    <tr>
+                                        <td>${time}</td>
+                                        <td>${moduleName}</td>
+                                        <td>${staff}</td>
+                                        <td>${room}</td>
+                                        <td>${eventCategory}</td>
+                                    </tr>
+                                `;
+                            })
+                            .join("");
+                        })
+                        .join("")}
+                    </table>
+                </div>`
+            )
+            .join("")}
         </div>
     </body>
     </html>
@@ -99,5 +110,7 @@ async function generateImage(classe, eventDetailsArray) {
 
     return nodeHtmlToImage({ output: "./image.png", html });
 }
+
+
 
 module.exports = { generateImage };
