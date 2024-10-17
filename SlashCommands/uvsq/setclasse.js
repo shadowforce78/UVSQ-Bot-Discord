@@ -21,18 +21,45 @@ module.exports = {
    */
   run: async (client, interaction, args) => {
     const classe = [
-      "INF1-A",
-      "INF1-B",
-      "INF1-C",
-      "INF2-A FI",
-      "INF2-B FI",
-      "INF2-A FA",
-      "INF2-B FA",
-      "INF3-A FI",
-      "INF3-B FI",
-      "INF3-A FA",
-      "INF3-B FA",
-    ];
+      // Info 
+      "INF1-A1",
+      "INF1-A2",
+      "INF1-B1",
+      "INF1-B2",
+      "INF1-C1",
+      "INF1-C2",
+      "INF2-FA",
+      "INF2-FI-A",
+      "INF2-FI-B",
+      "INF3-FA-A",
+      "INF3-FA-B",
+      "INF3-FI",
+      // MMI
+      "MMI1-A1",
+      "MMI1-A2",
+      "MMI1-B1",
+      "MMI1-B2",
+      "MMI2-A1",
+      "MMI2-A2",
+      "MMI2-B1",
+      "MMI2-B2",
+      // RT
+      "RT1-FA",
+      "RT1-FI-A1",
+      "RT1-FI-A2",
+      "RT1-FI-B1",
+      "RT1-FI-B2",
+      // GEII
+      "GEII1-TDA1",
+      "GEII1-TDA2",
+      "GEII1-TDB1",
+      "GEII1-TDB2",
+      "GEII1-TDC",
+      "GEII1-TP1",
+      "GEII1-TP2",
+      "GEII1-TP3",
+    ]
+
 
     const classeUser = interaction.options.getString("classe");
 
@@ -51,7 +78,7 @@ module.exports = {
     if (!classe.includes(classeUser)) {
       return interaction.followUp({
         content:
-          "La classe n'est pas valide\nVeuillez choisir une classe parmi les suivantes : INF1-A, INF1-B, INF1-C, INF2-A FI, INF2-B FI, INF2-A FA, INF2-B FA, INF3-A FI, INF3-B FI, INF3-A FA, INF3-B FA",
+          "La classe n'est pas valide\nVeuillez choisir une classe parmi les suivantes : \n" + classe.join(", ") + "(si votre classe n'est pas dans la liste, veuillez contacter `saumondeluxe` pour l'ajouter)",
       });
     } else {
       interaction.followUp({
