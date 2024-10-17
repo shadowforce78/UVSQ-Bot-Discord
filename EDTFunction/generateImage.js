@@ -139,6 +139,8 @@ async function generateImage(classe, coursParJourArray) {
                                         eventCategoryClass = "event-category-divers";
                                     } else if (eventCategory.includes("DS")) {
                                         eventCategoryClass = "event-category-DS";
+                                    } else if (eventCategory.includes("Contrôles")) {
+                                        eventCategoryClass = "event-category-DS";
                                     }
 
                                     return `
