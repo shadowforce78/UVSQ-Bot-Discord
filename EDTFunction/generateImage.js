@@ -57,7 +57,7 @@ async function generateImage(classe, coursParJourArray) {
                 background-color: rgb(128 0 255);
             }
             .event-category-TD {
-                background-color: rgb(255 0 255);
+                background-color: rgb(0 255 0);
             }
             .event-category-CM {
                 background-color: rgb(255 128 128);
@@ -99,7 +99,9 @@ async function generateImage(classe, coursParJourArray) {
 
                             return cours
                                 .map((coursDetail) => {
-                                    const time = coursDetail.Time || "N/A";
+                                    const time = coursDetail.Time
+                                        ? coursDetail.Time.match(/\d{2}:\d{2}-\d{2}:\d{2}/)[0] // Extract hh:mm-hh:mm
+                                        : "N/A";
                                     const moduleName = coursDetail.Module || "N/A";
                                     const staff = coursDetail.Staff || "N/A";
                                     const room = coursDetail.Room || "N/A";
