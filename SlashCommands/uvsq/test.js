@@ -17,7 +17,8 @@ module.exports = {
     run: async (client, interaction, args) => {
         const startDate = "2024-10-17"; // Date de début
         const endDate = "2024-10-17"; // Date de fin
-        const classe = "INF1-B"; // Classe à spécifier
+        // const classe = "INF1-B2"; // Classe à spécifier
+        const classe = "MMI1-A2"
 
         try {
             // Appeler la fonction getCalendar avec les valeurs dynamiques
