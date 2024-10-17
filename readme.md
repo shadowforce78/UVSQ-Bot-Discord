@@ -32,7 +32,7 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
 2. **Cloner le dépôt**  
    - Clonez le dépôt GitHub sur votre machine locale avec la commande suivante :
      ```bash
-     git clone <url_du_dépôt>
+     git clone https://github.com/shadowforce78/UVSQ-Bot-Discord.git
      ```
 
 3. **Installer les dépendances**  
