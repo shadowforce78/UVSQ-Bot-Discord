@@ -45,11 +45,11 @@ module.exports = async (client) => {
     await client.application.commands.set(arrayOfSlashCommands);
   });
 
-  // mongoose
-  const { mongooseConnectionString } = require("../config.json");
-  if (!mongooseConnectionString) return;
+  // mongoose disabled because IUT network sucks
+  // const { mongooseConnectionString } = require("../config.json");
+  // if (!mongooseConnectionString) return;
 
-  mongoose.set("strictQuery", true).connect(mongooseConnectionString).then(() =>
-    console.log("Connected to mongodb")
-  );
+  // mongoose.set("strictQuery", true).connect(mongooseConnectionString).then(() =>
+  //   console.log("Connected to mongodb")
+  // );
 };
