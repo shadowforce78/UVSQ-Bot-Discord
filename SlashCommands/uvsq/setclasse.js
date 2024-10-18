@@ -1,5 +1,6 @@
 const { Client, CommandInteraction, MessageEmbed } = require("discord.js");
-const schemaClasse = require("../../schema/classe");
+const data = require("../../db.json");
+const fs = require("fs");
 
 module.exports = {
   name: "classe",
@@ -62,20 +63,34 @@ module.exports = {
 
     const classeUser = interaction.options.getString("classe");
 
-    const data = await schemaClasse.findOne({ id: interaction.user.id });
-    if (!data) {
-      await schemaClasse.create({
-        id: interaction.user.id,
-        classe: classeUser,
-      });
+    // Fonction pour sauvegarder dans le fichier JSON
+    const saveToDatabase = (data) => {
+      fs.writeFileSync('../../db.json', JSON.stringify(data, null, 2), 'utf8');
+    };
+
+    // Schéma simulé pour JSON
+    const createUserSchema = (id, classe) => {
+      return {
+        id: id,
+        classe: classe,
+        dailyReminder: false,  // Par défaut à false, tu peux changer selon ton besoin
+        weeklyReminder: false  // Par défaut à false
+      };
+    };
+
+    // Chercher si l'utilisateur existe déjà
+    let userData = data.find((user) => user.id === interaction.user.id);
+
+    if (!userData) {
+      // Si l'utilisateur n'existe pas, on le crée
+      data.push(createUserSchema(interaction.user.id, classeUser));
     } else {
-      await schemaClasse.findOneAndUpdate(
-        { id: interaction.user.id },
-        {
-          classe: classeUser,
-        }
-      );
+      // Si l'utilisateur existe, on met à jour la classe
+      userData.classe = classeUser;
     }
+
+    // Sauvegarder les modifications dans le fichier JSON
+    saveToDatabase(data);
 
     if (!classe.includes(classeUser)) {
       return interaction.followUp({
