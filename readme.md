@@ -46,14 +46,12 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
      ```json
      {
        "token": "",
-       "prefix": "",
-       "mongooseConnectionString": ""
+       "prefix": ""
      }
      ```
    - Remplissez les champs :
      - `token` : Votre token de bot Discord.
      - `prefix` : Le préfixe de commande souhaité (ex : `u!`).
-     - `mongooseConnectionString` : La chaîne de connexion pour MongoDB si utilisée.
 
 5. **Lancer le bot**  
    - Pour démarrer le bot, exécutez la commande suivante :
