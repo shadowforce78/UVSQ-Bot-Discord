@@ -40,7 +40,7 @@ module.exports = {
             classeDB[user].classe = "INF2-B1";  // Mettre à jour la classe (exemple)
             classeDB[user].dailyReminder = false;  // Mettre à jour dailyReminder (exemple)
             classeDB[user].weeklyReminder = false;  // Mettre à jour weeklyReminder (exemple)
-            console.log("Informations utilisateur mises à jour :", classeDB[user]);
+            // console.log("Informations utilisateur mises à jour :", classeDB[user]);
         }
 
         // Sauvegarder les modifications dans le fichier JSON
