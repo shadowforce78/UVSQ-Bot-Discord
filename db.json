@@ -1,7 +1,1 @@
-{
-    "id":{
-        "classe" : string,
-        "dailyReminder": boolean,
-        "weeklyReminder": boolean,
-    }
-}
+{}
