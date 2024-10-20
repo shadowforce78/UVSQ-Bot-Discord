@@ -1,7 +1,8 @@
 const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar, getEvent } = require("../../EDTFunction/getCalendar");
 const { generateImage } = require("../../EDTFunction/generateImage");
-const classeSchema = require('../../schema/classe');
+const fs = require("fs");
+const classeDB = require('../../db.json')
 
 module.exports = {
   name: "edt",
@@ -32,13 +33,18 @@ module.exports = {
     const startDate = interaction.options.getString("startdate");
     const endDate = interaction.options.getString("enddate");
 
-    const classeData = await classeSchema.findOne({ id: interaction.user.id });
-    if (!classeData) {
+
+    let user = interaction.user.id
+    let userDB = classeDB[user]
+
+    // Si l'utilisateur n'a pas de classe
+    if (!userDB) {
       return interaction.followUp({
         content: "Tu n'as pas défini ta classe. Utilise la commande `/classe` pour définir ta classe.",
         ephemeral: true,
       });
     }
+
 
     // Validation du format de la date
     if (
@@ -82,7 +88,7 @@ module.exports = {
     }
 
 
-    const classe = classeData.classe;
+    const classe = userDB.classe;
 
     try {
       // Appeler la fonction getCalendar avec les valeurs dynamiques
