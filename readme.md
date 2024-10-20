@@ -7,6 +7,7 @@ Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructi
 ### Commandes disponibles
 
 1. **`/classe`**
+
    - **Description** : Sélectionne une classe spécifique et obtient l'emploi du temps correspondant.
    - **Argument** :
      - `classe` (string) : Nom ou code de la classe (ex : "IUT Info A").
@@ -23,25 +24,29 @@ Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructi
 
 Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez ces étapes :
 
-1. **Installer Node.js**  
+1. **Installer Node.js**
+
    - Assurez-vous d'avoir installé Node.js en version 20 ou supérieure. Vous pouvez vérifier votre version avec la commande :
      ```bash
      node -v
      ```
 
-2. **Cloner le dépôt**  
+2. **Cloner le dépôt**
+
    - Clonez le dépôt GitHub sur votre machine locale avec la commande suivante :
      ```bash
      git clone https://github.com/shadowforce78/UVSQ-Bot-Discord.git
      ```
 
-3. **Installer les dépendances**  
+3. **Installer les dépendances**
+
    - Après avoir cloné le dépôt, placez-vous dans le répertoire du projet et installez les dépendances en exécutant :
      ```bash
      npm install
      ```
 
-4. **Créer un fichier `config.json`**  
+4. **Créer un fichier `config.json`**
+
    - Dans le répertoire principal du projet, créez un fichier `config.json` avec le contenu suivant :
      ```json
      {
@@ -52,8 +57,23 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
    - Remplissez les champs :
      - `token` : Votre token de bot Discord.
      - `prefix` : Le préfixe de commande souhaité (ex : `u!`).
+   - Vous pouvez directement copier le fichier `config.json.example` avec la commande suivante :
+     ```bash
+     cp config.json.example config.json
+     ```
 
-5. **Lancer le bot**  
+5. **Créé un fichier `db.json`**
+
+   - Dans le répertoire principal du projet, créez un fichier `db.json` avec le contenu suivant :
+     ```json
+     {}
+     ```
+   - Vous pouvez directement copier le fichier `db.json.example` avec la commande suivante :
+     ```bash
+     cp db.json.example db.json
+     ```
+
+6. **Lancer le bot**
    - Pour démarrer le bot, exécutez la commande suivante :
      ```bash
      node .
