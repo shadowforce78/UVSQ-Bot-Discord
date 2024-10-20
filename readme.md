@@ -8,10 +8,10 @@ Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructi
 
 1. **`/classe`**
 
-   - **Description** : Sélectionne une classe spécifique et obtient l'emploi du temps correspondant.
+   - **Description** : Permet de sélectionner une classe pour les commandes suivantes.
    - **Argument** :
-     - `classe` (string) : Nom ou code de la classe (ex : "IUT Info A").
-   - **Exemple** : `/classe IUT Info A`
+     - `classe` (string) : Nom ou code de la classe (ex : "INF1-B2").
+   - **Exemple** : `/classe INF1-B2`
 
 2. **`/edt`**
    - **Description** : Récupère l'emploi du temps pour une période donnée.
@@ -19,6 +19,7 @@ Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructi
      - `debut` (date) : Date de début au format `YYYY-MM-DD`.
      - `fin` (date) : Date de fin au format `YYYY-MM-DD`.
    - **Exemple** : `/edt 2024-10-01 2024-10-07`
+   - **Remarque** : Pour des raisons de performance, la période ne doit pas dépasser 4 jours affichables.
 
 ## 🛠️ Installation
 
