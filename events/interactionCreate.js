@@ -1,10 +1,11 @@
 const client = require("../index");
-const classe = require("../schema/classe");
+const fs = require("fs");
+const classeDB = require('../../db.json')
 
 client.on("interactionCreate", async (interaction) => {
   // Slash Command Handling
   if (interaction.isCommand()) {
-    await interaction.deferReply({ ephemeral: false }).catch(() => {});
+    await interaction.deferReply({ ephemeral: false }).catch(() => { });
 
     const cmd = client.slashCommands.get(interaction.commandName);
     if (!cmd) return interaction.followUp({ content: "An error has occured " });
@@ -48,11 +49,13 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   if (interaction.isButton()) {
-    const data = await classe.findOne({ id: interaction.user.id });
-    if (!data) {
-      interaction.reply({
-        content: "You need to set your class first with /classe",
-        ephemeral: true,
+    let user = interaction.user.id;
+    let userDB = classeDB[user];
+
+    // Si l'utilisateur n'a pas de classe
+    if (!userDB) {
+      return interaction.followUp({
+        content: "Vous n'avez pas de classe définie !\nVeuillez définir votre classe avec la commande `/classe`",
       });
     }
 
