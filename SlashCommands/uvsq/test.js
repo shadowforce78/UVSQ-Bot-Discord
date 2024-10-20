@@ -16,45 +16,27 @@ module.exports = {
      */
     run: async (client, interaction, args) => {
 
-        // if (interaction.user.id != "918916801994309752") {
-        //     return interaction.followUp({
-        //         content: "Vous n'avez pas la permission d'utiliser cette commande (seul le developpeur peut l'utiliser)",
-        //     });
-        // }
-
-        // Ajout de l'id de l'utilisateur dans la base de données
-        let user = interaction.user.id
-        let userDB = classeDB[user]
-        // Vérifier si l'utilisateur existe déjà dans la base de données
-        if (!classeDB[user]) {
-            // Si l'utilisateur n'existe pas, on le crée
-            classeDB[user] = {
-                id: user,
-                classe: "INF2-B1",
-                dailyReminder: false,
-                weeklyReminder: false,
-            };
-            console.log("Nouvel utilisateur ajouté :", classeDB[user]);
-        } else {
-            // Si l'utilisateur existe, on met à jour ses informations
-            classeDB[user].classe = "INF2-B1";  // Mettre à jour la classe (exemple)
-            classeDB[user].dailyReminder = false;  // Mettre à jour dailyReminder (exemple)
-            classeDB[user].weeklyReminder = false;  // Mettre à jour weeklyReminder (exemple)
-            // console.log("Informations utilisateur mises à jour :", classeDB[user]);
+        if (interaction.user.id != "918916801994309752") {
+            return interaction.followUp({
+                content: "Vous n'avez pas la permission d'utiliser cette commande (seul le developpeur peut l'utiliser)",
+            });
         }
 
-        // Sauvegarder les modifications dans le fichier JSON
-        fs.writeFile('./db.json', JSON.stringify(classeDB, null, 4), (err) => {
-            if (err) {
-                console.log("Erreur lors de la sauvegarde :", err);
-            } else {
-                console.log("Données sauvegardées avec succès !");
-            }
-        });
+        let user = interaction.user.id
+        let userDB = classeDB[user]
 
+        // Si l'utilisateur n'a pas de classe
+        if (!userDB) {
+            return interaction.followUp({
+                content: "Vous n'avez pas de classe définie !",
+            });
+        }
+
+        // Si l'utilisateur a une classe
+        classe = userDB.classe
 
         interaction.followUp({
-            content: "Commande de test effectuée avec succès !"
+            content: `Votre classe est ${classe} !`,
         })
 
     },
