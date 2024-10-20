@@ -1,5 +1,4 @@
 const client = require("../index.js");
-const schemaClasse = require("../schema/classe.js");
 
 client.on("ready", async () => {
     // const data = await schemaClasse.findOne({ id: interaction.user.id });
