@@ -85,6 +85,7 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
 - [ ] Adapter le HTML pour trois jours (adapter la grille pour 1, 2, 3 ou 4 jours).
 - [ ] Ajouter le système de rappel par semaine (configReminder).
 - [ ] Ajouter deux boutons sous l'image pour changer de jour (Précédent et Suivant).
+- [ ] Ajouter un système de sauvegarde d'images de cours pour éviter de les générer à chaque fois.
 - [ ] Ajouter un moyen interactif pour ajouter des nouvelles classes (github actions dans un ficher json externe).
 - [ ] Régler le problème des doubles cours (ex : le 2024-10-17, deux cours en même temps mais inversés à la moitié).
 - [x] Ajouter une nouvelle base de données en local (json) parce mongoDB c'est chiant.
