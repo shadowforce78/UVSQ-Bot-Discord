@@ -164,7 +164,7 @@ async function generateImage(classe, coursParJourArray) {
     // </body>
     // </html>
     // `;
-    
+
     const html = `
     <html>
     <head>
@@ -250,8 +250,8 @@ async function generateImage(classe, coursParJourArray) {
         <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
         <div class="container">
             ${Object.keys(coursParJour)
-                .map(
-                    (date) => `
+            .map(
+                (date) => `
                     <div class="day-container">
                         <h2>${date}</h2>
                         <table>
@@ -263,55 +263,55 @@ async function generateImage(classe, coursParJourArray) {
                                 <th>Type</th>
                             </tr>
                             ${Object.keys(coursParJour[date])
-                                .map((courseKey) => {
-                                    const cours = Array.isArray(
-                                        coursParJour[date][courseKey]
-                                    )
-                                        ? coursParJour[date][courseKey]
-                                        : [coursParJour[date][courseKey]];
+                        .map((courseKey) => {
+                            const cours = Array.isArray(
+                                coursParJour[date][courseKey]
+                            )
+                                ? coursParJour[date][courseKey]
+                                : [coursParJour[date][courseKey]];
 
-                                    return cours
-                                        .map((coursDetail) => {
-                                            const time = coursDetail.Time
-                                                ? coursDetail.Time.match(/\d{2}:\d{2}-\d{2}:\d{2}/)[0]
-                                                : "N/A";
-                                            const moduleName = coursDetail.Module || "N/A";
-                                            const staff = coursDetail.Staff || "N/A";
-                                            const room = coursDetail.Room || "N/A";
-                                            const eventCategory = coursDetail["Event category"] || "N/A";
+                            return cours
+                                .map((coursDetail) => {
+                                    const time = coursDetail.Time
+                                        ? coursDetail.Time.match(/\d{2}:\d{2}-\d{2}:\d{2}/)[0]
+                                        : "N/A";
+                                    const moduleName = coursDetail.Module || "N/A";
+                                    const staff = coursDetail.Staff || "N/A";
+                                    const room = coursDetail.Room || "N/A";
+                                    const eventCategory = coursDetail["Event category"] || "N/A";
 
-                                            let eventCategoryClass = "";
-                                            let eventCategoryType = "";
-                                            if (eventCategory.includes("TP")) {
-                                                eventCategoryClass = "event-category-TP";
-                                                eventCategoryType = "TP";
-                                            } else if (eventCategory.includes("TD")) {
-                                                eventCategoryClass = "event-category-TD";
-                                                eventCategoryType = "TD";
-                                            } else if (eventCategory.includes("CM")) {
-                                                eventCategoryClass = "event-category-CM";
-                                                eventCategoryType = "CM";
-                                            } else if (eventCategory.includes("Projet en autonomie")) {
-                                                eventCategoryClass = "event-category-SAE";
-                                                eventCategoryType = "SAE";
-                                            } else if (eventCategory.includes("Integration")) {
-                                                eventCategoryClass = "event-category-INT";
-                                                eventCategoryType = "INT";
-                                            } else if (eventCategory.includes("Reunion")) {
-                                                eventCategoryClass = "event-category-REUNION";
-                                                eventCategoryType = "Réunion";
-                                            } else if (eventCategory.includes("projet tutore")) {
-                                                eventCategoryClass = "event-category-projetutore";
-                                                eventCategoryType = "SAE";
-                                            } else if (eventCategory.includes("Divers")) {
-                                                eventCategoryClass = "event-category-divers";
-                                                eventCategoryType = "Divers";
-                                            } else if (eventCategory.includes("DS") || eventCategory.includes("Contrôles")) {
-                                                eventCategoryClass = "event-category-DS";
-                                                eventCategoryType = "DS";
-                                            }
+                                    let eventCategoryClass = "";
+                                    let eventCategoryType = "";
+                                    if (eventCategory.includes("TP")) {
+                                        eventCategoryClass = "event-category-TP";
+                                        eventCategoryType = "TP";
+                                    } else if (eventCategory.includes("TD")) {
+                                        eventCategoryClass = "event-category-TD";
+                                        eventCategoryType = "TD";
+                                    } else if (eventCategory.includes("CM")) {
+                                        eventCategoryClass = "event-category-CM";
+                                        eventCategoryType = "CM";
+                                    } else if (eventCategory.includes("Projet en autonomie")) {
+                                        eventCategoryClass = "event-category-SAE";
+                                        eventCategoryType = "SAE";
+                                    } else if (eventCategory.includes("Integration")) {
+                                        eventCategoryClass = "event-category-INT";
+                                        eventCategoryType = "INT";
+                                    } else if (eventCategory.includes("Reunion")) {
+                                        eventCategoryClass = "event-category-REUNION";
+                                        eventCategoryType = "Réunion";
+                                    } else if (eventCategory.includes("projet tutore")) {
+                                        eventCategoryClass = "event-category-projetutore";
+                                        eventCategoryType = "SAE";
+                                    } else if (eventCategory.includes("Divers")) {
+                                        eventCategoryClass = "event-category-divers";
+                                        eventCategoryType = "Divers";
+                                    } else if (eventCategory.includes("DS") || eventCategory.includes("Contrôles")) {
+                                        eventCategoryClass = "event-category-DS";
+                                        eventCategoryType = "DS";
+                                    }
 
-                                            return `
+                                    return `
                                             <tr>
                                                 <td>${time}</td>
                                                 <td>${moduleName}</td>
@@ -320,14 +320,14 @@ async function generateImage(classe, coursParJourArray) {
                                                 <td class="${eventCategoryClass}">${eventCategoryType}</td>
                                             </tr>
                                         `;
-                                        })
-                                        .join("");
                                 })
-                                .join("")}
+                                .join("");
+                        })
+                        .join("")}
                         </table>
                     </div>`
-                )
-                .join("")}
+            )
+            .join("")}
         </div>
     </body>
     </html>
@@ -339,8 +339,11 @@ async function generateImage(classe, coursParJourArray) {
     const options = {
         output: './image.png',
         html: html,
-        puppeteerArgs : ['--no-sandbox', '--disable-setuid-sandbox']
-    }
+        puppeteer: {
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        }
+    };
+
 
     return nodeHtmlToImage(options);
 }
