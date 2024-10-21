@@ -165,7 +165,13 @@ async function generateImage(classe, coursParJourArray) {
     </html>
     `;
 
-    return nodeHtmlToImage({ output: "./image.png", html });
+    const options = {
+        output: './image.png',
+        html: html,
+        puppeteerArgs : ['--no-sandbox', '--disable-setuid-sandbox']
+    }
+
+    return nodeHtmlToImage(options);
 }
 
 module.exports = { generateImage };
