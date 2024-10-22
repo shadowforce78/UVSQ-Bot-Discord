@@ -124,20 +124,20 @@ async function generateImage(classe, coursParJourArray) {
                     ctx.font = '14px Arial';
 
                     if (index === 0) {
-                        // Afficher les horaires à la verticale
-                        ctx.fillText(text[0], 60 + index * columnWidth, currentY + 15);
-                        ctx.fillText(text[1], 60 + index * columnWidth, currentY + 35);
+                        // Afficher les horaires à la verticale (ajustement de la position)
+                        ctx.fillText(text[0], 70 + index * columnWidth, currentY + 15); // Ajusté pour éviter le chevauchement
+                        ctx.fillText(text[1], 70 + index * columnWidth, currentY + 35);
                     } else if (index === 1) {
-                        // Justification automatique du nom de la matière si trop long
-                        wrapText(ctx, text, 60 + index * columnWidth, currentY + 25, columnWidth - 20, 15);
+                        // Justification automatique du nom de la matière si trop long (remonté légèrement)
+                        wrapText(ctx, text, 60 + index * columnWidth, currentY + 20, columnWidth - 20, 15);
                     } else {
                         // Afficher les autres informations normalement
                         ctx.fillText(text, 60 + index * columnWidth, currentY + 25);
                     }
                 });
 
-                // Avancer verticalement pour chaque cours
-                currentY += 50;
+                // Avancer verticalement pour chaque cours (ajout d'un espace supplémentaire)
+                currentY += 90; // Espacement augmenté entre les cours
             });
         });
 
