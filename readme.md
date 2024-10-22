@@ -63,7 +63,7 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
      cp config.json.example config.json
      ```
 
-5. **Créé un fichier `db.json`**
+5. **Créer un fichier `db.json`**
 
    - Dans le répertoire principal du projet, créez un fichier `db.json` avec le contenu suivant :
      ```json
@@ -87,8 +87,15 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
 - [ ] Ajouter un système de sauvegarde d'images de cours pour éviter de les générer à chaque fois.
 - [ ] Ajouter un moyen interactif pour ajouter des nouvelles classes (github actions dans un ficher json externe).
 - [ ] Régler le problème des doubles cours (ex : le 2024-10-17, deux cours en même temps mais inversés à la moitié).
-- [x] Changer le systeme de generation d'image pour le deployer sur un serveur.
+- [x] Changer le système de génération d'image pour le déployer sur un serveur.
 - [x] Adapter le HTML pour trois jours (adapter la grille pour 1, 2, 3 ou 4 jours).
-- [x] Ajouter une nouvelle base de données en local (json) parce mongoDB c'est chiant.
+- [x] Ajouter une nouvelle base de données en local (json) parce MongoDB c'est chiant.
 - [x] Régler la fonction `group` dans `getCalendar.js`.
 - [x] Vérifier pour tous types de classes (pas uniquement Informatique).
+
+## 🙏 Crédits
+
+- Un grand merci à [ItsTheSky](https://github.com/ItsTheSky) pour son aide avec certains problèmes serveur.
+- Merci à [Escartem](https://github.com/Escartem/EDTVelizy) pour avoir fourni les endpoints à utiliser pour les emplois du temps.
+
+---
