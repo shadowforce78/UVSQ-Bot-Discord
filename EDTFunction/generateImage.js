@@ -1,4 +1,5 @@
-const nodeHtmlToImage = require("node-html-to-image");
+const { createCanvas, loadImage } = require('canvas');
+const fs = require('fs');
 
 // Fonction pour générer l'image de l'emploi du temps
 async function generateImage(classe, coursParJourArray) {
@@ -11,188 +12,161 @@ async function generateImage(classe, coursParJourArray) {
         Object.assign(acc[dateKey], curr[dateKey]);
         return acc;
     }, {});
-    
-    const html = `
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-            }
-            .container {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Grille responsive */
-                gap: 20px;
-                margin: 20px;
-                padding: 10px;
-            }
-            .day-container {
-                padding: 20px;
-                border: 1px solid #dddddd;
-                border-radius: 10px;
-                background-color: #f9f9f9;
-                box-sizing: border-box;
-                width: 100%;
-                max-width: 100%; /* Limiter la largeur */
-                overflow: hidden; /* Empêcher le débordement */
-                word-wrap: break-word; /* Gérer les longs textes */
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                font-size: 14px;
-            }
-            td, th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 6px;
-                box-sizing: border-box;
-            }
-            th {
-                background-color: #f1f1f1;
-            }
-            tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            h2 {
-                text-align: center;
-                font-size: 20px;
-                margin-bottom: 10px;
-                color: #333;
-                overflow: hidden; /* Limiter le débordement du titre */
-            }
-            /* Couleurs pour les catégories d'événements */
-            .event-category-TP {
-                background-color: rgb(128, 0, 255);
-            }
-            .event-category-TD {
-                background-color: rgb(0, 255, 0);
-            }
-            .event-category-CM {
-                background-color: rgb(255, 128, 128);
-            }
-            .event-category-SAE {
-                background-color: rgb(128, 128, 128);
-            }
-            .event-category-INT {
-                background-color: rgb(255, 255, 0);
-            }
-            .event-category-REUNION {
-                background-color: #D7E1FF;
-            }
-            .event-category-projetutore {
-                background-color: rgb(255, 0, 128);
-            }
-            .event-category-divers {
-                background-color: rgb(128, 255, 255);
-            }
-            .event-category-DS {
-                background-color: rgb(255, 0, 255);
-            }
-        </style>
-    </head>
-    <body>
-        <h1 style="text-align: center;">Emploi du temps de la classe ${classe}</h1>
-        <div class="container">
-            ${Object.keys(coursParJour)
-            .map(
-                (date) => `
-                    <div class="day-container">
-                        <h2>${date}</h2>
-                        <table>
-                            <tr>
-                                <th>Heure</th>
-                                <th>Matière</th>
-                                <th>Professeur</th>
-                                <th>Salle</th>
-                                <th>Type</th>
-                            </tr>
-                            ${Object.keys(coursParJour[date])
-                        .map((courseKey) => {
-                            const cours = Array.isArray(
-                                coursParJour[date][courseKey]
-                            )
-                                ? coursParJour[date][courseKey]
-                                : [coursParJour[date][courseKey]];
 
-                            return cours
-                                .map((coursDetail) => {
-                                    const time = coursDetail.Time
-                                        ? coursDetail.Time.match(/\d{2}:\d{2}-\d{2}:\d{2}/)[0]
-                                        : "N/A";
-                                    const moduleName = coursDetail.Module || "N/A";
-                                    const staff = coursDetail.Staff || "N/A";
-                                    const room = coursDetail.Room || "N/A";
-                                    const eventCategory = coursDetail["Event category"] || "N/A";
+    // Créer un canvas avec une hauteur dynamique
+    const width = 1200;
+    let height = 800 + Object.keys(coursParJour).length * 150; // Hauteur dynamique en fonction des jours
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
 
-                                    let eventCategoryClass = "";
-                                    let eventCategoryType = "";
-                                    if (eventCategory.includes("TP")) {
-                                        eventCategoryClass = "event-category-TP";
-                                        eventCategoryType = "TP";
-                                    } else if (eventCategory.includes("TD")) {
-                                        eventCategoryClass = "event-category-TD";
-                                        eventCategoryType = "TD";
-                                    } else if (eventCategory.includes("CM")) {
-                                        eventCategoryClass = "event-category-CM";
-                                        eventCategoryType = "CM";
-                                    } else if (eventCategory.includes("Projet en autonomie")) {
-                                        eventCategoryClass = "event-category-SAE";
-                                        eventCategoryType = "SAE";
-                                    } else if (eventCategory.includes("Integration")) {
-                                        eventCategoryClass = "event-category-INT";
-                                        eventCategoryType = "INT";
-                                    } else if (eventCategory.includes("Reunion")) {
-                                        eventCategoryClass = "event-category-REUNION";
-                                        eventCategoryType = "Réunion";
-                                    } else if (eventCategory.includes("projet tutore")) {
-                                        eventCategoryClass = "event-category-projetutore";
-                                        eventCategoryType = "SAE";
-                                    } else if (eventCategory.includes("Divers")) {
-                                        eventCategoryClass = "event-category-divers";
-                                        eventCategoryType = "Divers";
-                                    } else if (eventCategory.includes("DS") || eventCategory.includes("Contrôles")) {
-                                        eventCategoryClass = "event-category-DS";
-                                        eventCategoryType = "DS";
-                                    }
+    // Couleurs de fond
+    ctx.fillStyle = '#ffffff'; // Blanc
+    ctx.fillRect(0, 0, width, height);
 
-                                    return `
-                                            <tr>
-                                                <td>${time}</td>
-                                                <td>${moduleName}</td>
-                                                <td>${staff}</td>
-                                                <td>${room}</td>
-                                                <td class="${eventCategoryClass}">${eventCategoryType}</td>
-                                            </tr>
-                                        `;
-                                })
-                                .join("");
-                        })
-                        .join("")}
-                        </table>
-                    </div>`
-            )
-            .join("")}
-        </div>
-    </body>
-    </html>
-`;
+    // Titre
+    ctx.font = 'bold 30px Arial';
+    ctx.fillStyle = '#333333'; // Couleur du texte
+    ctx.textAlign = 'center';
+    ctx.fillText(`Emploi du temps de la classe ${classe}`, width / 2, 50);
 
+    let currentY = 100; // Point de départ vertical
 
-
-
-    const options = {
-        output: './image.png',
-        html: html,
-        puppeteer: {
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
+    // Définir les couleurs pour chaque type d'événement
+    const eventColors = {
+        TP: 'rgb(128, 0, 255)',        // Violet pour TP
+        TD: 'rgb(0, 255, 0)',          // Vert pour TD
+        CM: 'rgb(255, 128, 128)',      // Rouge clair pour CM
+        SAE: 'rgb(128, 128, 128)',     // Gris pour Projet en autonomie
+        INT: 'rgb(255, 255, 0)',       // Jaune pour Integration
+        REUNION: '#D7E1FF',            // Bleu clair pour Réunion
+        projetutore: 'rgb(255, 0, 128)', // Rose pour Projet Tutore
+        DS: 'rgb(255, 0, 255)',        // Violet pour DS
+        Divers: 'rgb(128, 255, 255)',  // Bleu cyan pour Divers
     };
 
+    Object.keys(coursParJour).forEach((date) => {
+        // Dessiner la box du jour
+        ctx.fillStyle = '#f1f1f1'; // Couleur de fond de la box du jour
+        ctx.fillRect(50, currentY, width - 100, 100);
 
-    return nodeHtmlToImage(options);
+        // Dessiner le titre du jour (heures uniquement)
+        const dayTitle = `Cours du jour (${Object.keys(coursParJour[date])[0].substring(0, 10)})`; // Titre simplifié
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = '#000000'; // Noir
+        ctx.fillText(dayTitle, width / 2, currentY + 40);
+
+        // Avancer verticalement pour éviter chevauchement
+        currentY += 60;
+
+        // Ajouter les headers (Heure, Matière, Professeur, Salle, Type)
+        const headers = ['Heure', 'Matière', 'Professeur', 'Salle', 'Type'];
+        const columnWidth = (width - 150) / headers.length;
+
+        headers.forEach((header, index) => {
+            ctx.fillStyle = '#dddddd'; // Fond gris clair pour les headers
+            ctx.fillRect(50 + index * columnWidth, currentY, columnWidth, 40);
+
+            ctx.fillStyle = '#000000'; // Texte en noir
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(header, 60 + index * columnWidth, currentY + 25);
+        });
+
+        // Avancer après les headers
+        currentY += 50;
+
+        Object.keys(coursParJour[date]).forEach((courseKey) => {
+            const cours = Array.isArray(coursParJour[date][courseKey])
+                ? coursParJour[date][courseKey]
+                : [coursParJour[date][courseKey]];
+
+            cours.forEach((coursDetail) => {
+                // Box du cours
+                ctx.fillStyle = '#f9f9f9'; // Couleur de fond des cours
+                ctx.fillRect(50, currentY, width - 100, 80);
+
+                // Déterminer la couleur en fonction du type de cours
+                const eventCategory = coursDetail['Event category'] || 'N/A';
+                let eventColor = '#FFFFFF'; // Couleur par défaut (blanc)
+                if (eventCategory.includes('TP')) {
+                    eventColor = eventColors.TP;
+                } else if (eventCategory.includes('TD')) {
+                    eventColor = eventColors.TD;
+                } else if (eventCategory.includes('CM')) {
+                    eventColor = eventColors.CM;
+                } else if (eventCategory.includes('Projet en autonomie')) {
+                    eventColor = eventColors.SAE;
+                } else if (eventCategory.includes('Integration')) {
+                    eventColor = eventColors.INT;
+                } else if (eventCategory.includes('Reunion')) {
+                    eventColor = eventColors.REUNION;
+                } else if (eventCategory.includes('projet tutore')) {
+                    eventColor = eventColors.projetutore;
+                } else if (eventCategory.includes('DS') || eventCategory.includes('Contrôles')) {
+                    eventColor = eventColors.DS;
+                } else if (eventCategory.includes('Divers')) {
+                    eventColor = eventColors.Divers;
+                }
+
+                // Informations sur le cours
+                const time = coursDetail.Time ? coursDetail.Time.match(/\d{2}:\d{2}-\d{2}:\d{2}/)[0].split('-') : ['N/A', 'N/A'];
+                const moduleName = coursDetail.Module || 'N/A';
+                const staff = coursDetail.Staff || 'N/A';
+                const room = coursDetail.Room || 'N/A';
+
+                // Afficher les informations du cours
+                const courseDetails = [time, moduleName, staff, room, eventCategory];
+                courseDetails.forEach((text, index) => {
+                    // Délimiter chaque information
+                    ctx.fillStyle = eventColor; // Couleur du type de cours
+                    ctx.fillRect(50 + index * columnWidth, currentY, columnWidth, 40);
+
+                    ctx.fillStyle = '#000000'; // Texte sur fond coloré
+                    ctx.font = '14px Arial';
+
+                    if (index === 0) {
+                        // Afficher les horaires à la verticale
+                        ctx.fillText(text[0], 60 + index * columnWidth, currentY + 15);
+                        ctx.fillText(text[1], 60 + index * columnWidth, currentY + 35);
+                    } else if (index === 1) {
+                        // Justification automatique du nom de la matière si trop long
+                        wrapText(ctx, text, 60 + index * columnWidth, currentY + 25, columnWidth - 20, 15);
+                    } else {
+                        // Afficher les autres informations normalement
+                        ctx.fillText(text, 60 + index * columnWidth, currentY + 25);
+                    }
+                });
+
+                // Avancer verticalement pour chaque cours
+                currentY += 50;
+            });
+        });
+
+        // Espace supplémentaire entre les jours
+        currentY += 50;
+    });
+
+    // Sauvegarder l'image dans un fichier
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync('./image.png', buffer);
+}
+
+// Fonction pour couper le texte automatiquement si trop long
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+            context.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    context.fillText(line, x, y);
 }
 
 module.exports = { generateImage };

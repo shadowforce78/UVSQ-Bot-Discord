@@ -1,6 +1,6 @@
 const { Client, CommandInteraction } = require("discord.js");
 const { getCalendar, getEvent } = require("../../EDTFunction/getCalendar");
-const { generateImage } = require("../../EDTFunction/generateImage");
+const { generateImage } = require("../../EDTFunction/generateImage.js");
 const fs = require("fs");
 const classeDB = require('../../db.json')
 
