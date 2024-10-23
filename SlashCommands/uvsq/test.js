@@ -86,14 +86,25 @@ module.exports = {
             );
 
             const eventDetailsArray = Object.values(eventDetails);
+            
+            // Remettre les dates au format DD-MM-YYYY
+            const startDateWithDash = startDate.split('-').reverse().join('-');
+            const endDateWithDash = endDate.split('-').reverse().join('-');
 
-            // Générer l'image
-            await generateImage(classe, eventDetailsArray);
+            const fileName = `./EDTsaves/${classe}-${startDateWithDash}-${endDateWithDash}-image.png`;
+            // Si le fichier existe déjà, alors on genere pas l'image
+
+            if (fs.existsSync(fileName)) {
+                console.log('EDT trouvé')
+            } else {
+                await generateImage(classe, eventDetailsArray);
+                console.log('EDT généré')
+            }
 
             // Répondre à l'utilisateur avec un message de confirmation
             interaction.followUp({
                 content: "L'image de l'emploi du temps a été générée avec succès !",
-                files: [`./EDTsaves/${classe}-${startDate}-${endDate}-image.png`],
+                files: [fileName],
                 ephemeral: true,
             });
         } catch (err) {

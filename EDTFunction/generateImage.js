@@ -5,12 +5,12 @@ const { start } = require('repl');
 function truncateText(ctx, text, maxWidth) {
     let truncated = text;
     const ellipsis = '...';
-    
+
     // If text fits, return it as is
     if (ctx.measureText(text).width <= maxWidth) {
         return text;
     }
-    
+
     // Binary search for the right length
     let start = 0;
     let end = text.length;
@@ -23,7 +23,7 @@ function truncateText(ctx, text, maxWidth) {
             end = mid - 1;
         }
     }
-    
+
     return text.slice(0, start) + ellipsis;
 }
 
@@ -61,7 +61,7 @@ async function generateImage(classe, coursParJourArray) {
 
     // Calculate dimensions
     const daysCount = Object.keys(coursParJour).length;
-    const maxCoursesPerDay = Math.max(...Object.values(coursParJour).map(day => 
+    const maxCoursesPerDay = Math.max(...Object.values(coursParJour).map(day =>
         Object.keys(day).length
     ));
 
@@ -114,7 +114,7 @@ async function generateImage(classe, coursParJourArray) {
     Object.keys(coursParJour).forEach((date, dayIndex) => {
         const columnIndex = dayIndex % columnsCount;
         const rowIndex = Math.floor(dayIndex / columnsCount);
-        
+
         const startX = padding + columnIndex * (dayWidth + padding);
         const startY = headerHeight + rowIndex * (rowHeight * (maxCoursesPerDay + 1) + dayHeaderHeight + padding);
 
@@ -123,9 +123,9 @@ async function generateImage(classe, coursParJourArray) {
         ctx.strokeStyle = '#dddddd';
         ctx.beginPath();
         ctx.roundRect(
-            startX, 
-            startY, 
-            dayWidth, 
+            startX,
+            startY,
+            dayWidth,
             rowHeight * (maxCoursesPerDay + 1) + dayHeaderHeight,
             10
         );
@@ -171,7 +171,7 @@ async function generateImage(classe, coursParJourArray) {
             ctx.textAlign = 'left';
 
             let currentX = startX + cellPadding;
-            
+
             // Draw each cell with proper truncation
             [
                 { text: time, width: columnConfig[0].width },
@@ -197,9 +197,11 @@ async function generateImage(classe, coursParJourArray) {
 
     // Save the image and return the path
     const classeName = classe
-    const startDateWithoutDashes = Object.keys(coursParJour)[0].replace("/", '-');
-    const endDateWithoutDashes = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace("/", '-');
-    const fileName = `./EDTsaves/${classeName}-${startDateWithoutDashes}-${endDateWithoutDashes}-image.png`.replace(/\s/g, '');
+    const startDateWithDash = Object.keys(coursParJour)[0].replace(/\//g, '-');
+    const endDateWithDash = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace(/\//g, '-');
+
+
+    const fileName = `./EDTsaves/${classeName}-${startDateWithDash}-${endDateWithDash}-image.png`;
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(fileName, buffer);
     return fileName;
