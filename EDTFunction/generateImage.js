@@ -27,6 +27,16 @@ function truncateText(ctx, text, maxWidth) {
     return text.slice(0, start) + ellipsis;
 }
 
+// async function generateImage(classe, coursParJourArray) {
+//     // Merge the array of course objects
+//     const coursParJour = coursParJourArray.reduce((acc, curr) => {
+//         const dateKey = Object.keys(curr)[0];
+//         if (!acc[dateKey]) {
+//             acc[dateKey] = {};
+//         }
+//         Object.assign(acc[dateKey], curr[dateKey]);
+//         return acc;
+//     }, {});
 async function generateImage(classe, coursParJourArray) {
     // Merge the array of course objects
     const coursParJour = coursParJourArray.reduce((acc, curr) => {
@@ -37,6 +47,18 @@ async function generateImage(classe, coursParJourArray) {
         Object.assign(acc[dateKey], curr[dateKey]);
         return acc;
     }, {});
+
+    // Get all dates from coursParJour
+    const datesInData = Object.keys(coursParJour);
+
+    // If there are no dates in the data, handle appropriately
+    if (datesInData.length === 0) {
+        return null;
+    }
+
+    // Get the actual start and end dates from the data for display purposes
+    const firstDate = datesInData[0];
+    const lastDate = datesInData[datesInData.length - 1];
 
     // Define colors for event categories
     const categoryColors = {
@@ -195,13 +217,48 @@ async function generateImage(classe, coursParJourArray) {
         });
     });
 
-    // Save the image and return the path
-    const classeName = classe
-    const startDateWithDash = Object.keys(coursParJour)[0].replace(/\//g, '-');
-    const endDateWithDash = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace(/\//g, '-');
+    //     // Save the image and return the path
+    //     const classeName = classe
+    //     const startDateWithDash = Object.keys(coursParJour)[0].replace(/\//g, '-');
+    //     const endDateWithDash = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace(/\//g, '-');
 
 
-    const fileName = `./EDTsaves/${classeName}-${startDateWithDash}-${endDateWithDash}-image.png`;
+    //     const fileName = `./EDTsaves/${classeName}-${startDateWithDash}-${endDateWithDash}-image.png`;
+    //     const buffer = canvas.toBuffer('image/png');
+    //     fs.writeFileSync(fileName, buffer);
+    //     return fileName;
+    // }
+
+    // module.exports = { generateImage };
+    function getOriginalDates(courseDates) {
+        if (courseDates.length === 0) return { start: null, end: null };
+
+        // Convert DD/MM/YYYY to YYYY-MM-DD for comparison
+        function convertToISO(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Get the dates from courseDates array
+        const dates = courseDates.map(date => convertToISO(date));
+
+        // Sort dates to ensure correct order
+        dates.sort();
+
+        // Return first and last dates in original format
+        return {
+            start: courseDates.find(date => convertToISO(date) === dates[0]),
+            end: courseDates.find(date => convertToISO(date) === dates[dates.length - 1])
+        };
+    }
+
+    // Get the actual class schedule dates
+    const { start: scheduleStart, end: scheduleEnd } = getOriginalDates(datesInData);
+    const formattedScheduleStart = scheduleStart.replace(/\//g, '-');
+    const formattedScheduleEnd = scheduleEnd.replace(/\//g, '-');
+
+    // For the filename, use the schedule dates
+    const fileName = `./EDTsaves/${classe}-${formattedScheduleStart}-${formattedScheduleEnd}-image.png`;
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(fileName, buffer);
     return fileName;
