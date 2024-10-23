@@ -6,7 +6,7 @@ const classeDB = require('../../db.json')
 
 module.exports = {
   name: "edt",
-  description: "Ceci est une commande permettant de tester des choses",
+  description: "Commande permettant de générer l'emploi du temps",
   userperm: [""],
   botperm: [""],
   options: [

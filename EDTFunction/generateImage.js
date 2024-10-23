@@ -1,5 +1,6 @@
 const { createCanvas } = require('canvas');
 const fs = require('fs');
+const { start } = require('repl');
 
 function truncateText(ctx, text, maxWidth) {
     let truncated = text;
@@ -195,9 +196,13 @@ async function generateImage(classe, coursParJourArray) {
     });
 
     // Save the image and return the path
+    const classeName = classe
+    const startDateWithoutDashes = Object.keys(coursParJour)[0].replace("/", '-');
+    const endDateWithoutDashes = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace("/", '-');
+    const fileName = `./EDTsaves/${classeName}-${startDateWithoutDashes}-${endDateWithoutDashes}-image.png`.replace(/\s/g, '');
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync('./image.png', buffer);
-    return './image.png';
+    fs.writeFileSync(fileName, buffer);
+    return fileName;
 }
 
 module.exports = { generateImage };
