@@ -3,6 +3,10 @@
         "id": "918916801994309752",
         "classe": "INF1-B2",
         "dailyReminder": false,
-        "weeklyReminder": false
+        "weeklyReminder": false,
+        "lastRequest": [
+            1,
+            "2024-10-24"
+        ]
     }
 }

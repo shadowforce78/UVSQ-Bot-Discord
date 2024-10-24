@@ -2,6 +2,9 @@ const client = require("../index");
 const fs = require("fs");
 const classeDB = require("../db.json");
 
+const { getCalendar, getEvent } = require("../EDTFunction/getCalendar");
+const { generateImage } = require("../EDTFunction/generateImage.js");
+
 client.on("interactionCreate", async (interaction) => {
 	// Slash Command Handling
 	if (interaction.isCommand()) {
@@ -112,5 +115,146 @@ client.on("interactionCreate", async (interaction) => {
 				ephemeral: true,
 			});
 		}
+
+
+
+		// CHANGEMENT DE JOUR
+		// if (interaction.customId === `previous`) {
+
+		// 	function formatDateForFileName(dateStr) {
+		// 		const date = new Date(dateStr);
+		// 		const day = String(date.getDate()).padStart(2, '0');
+		// 		const month = String(date.getMonth() + 1).padStart(2, '0');
+		// 		const year = date.getFullYear();
+		// 		return `${day}-${month}-${year}`;
+		// 	}
+		// 	const nbDeJour = classeDB[userID].lastRequest[0];
+		// 	const startDate = classeDB[userID].lastRequest[1];
+
+		// 	const newStart = new Date(startDate);
+		// 	const newEnd = new Date(startDate);
+
+		// 	newStart.setDate(newStart.getDate() - 1);
+		// 	newEnd.setDate(newEnd.getDate() - 1);
+
+		// 	const newStartString = newStart.toISOString().split('T')[0];
+		// 	const newEndString = newEnd.toISOString().split('T')[0];
+
+		// 	const classe = classeDB[userID].classe;
+		// 	if (nbDeJour > 1) {
+		// 		interaction.reply({
+		// 			content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
+		// 		})
+		// 	} else {
+		// 		const calendarRes = await getCalendar(newStartString, newEndString, classe);
+		// 		const eventDetails = await Promise.all(
+		// 			calendarRes.map((event) => getEvent(event.id))
+		// 		);
+		// 		const eventDetailsArray = Object.values(eventDetails);
+
+		// 		if (eventDetailsArray.length === 0) {
+		// 			return interaction.reply({
+		// 				content: "Aucun cours trouvé pour cette période.",
+		// 				ephemeral: true,
+		// 			});
+		// 		}
+
+		// 		const startDateFormatted = formatDateForFileName(newStartString);
+		// 		const endDateFormatted = formatDateForFileName(newEndString);
+		// 		const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
+
+		// 		if (fs.existsSync(fileName)) {
+		// 		} else {
+		// 			await generateImage(classe, eventDetailsArray);
+		// 		}
+		// 		const interactionID = interaction.id;
+		// 		const channel = client.channels.cache.get(interaction.channelId);
+		// 		const message = await channel.messages.fetch(interactionID);
+		// 		message.delete();
+		// 		channel.send({
+		// 			files: [fileName],
+		// 		});
+		// 	}
+		// }
+		if (interaction.customId === `previous`) {
+
+			function formatDateForFileName(dateStr) {
+				const date = new Date(dateStr);
+				const day = String(date.getDate()).padStart(2, '0');
+				const month = String(date.getMonth() + 1).padStart(2, '0');
+				const year = date.getFullYear();
+				return `${day}-${month}-${year}`;
+			}
+		
+			const nbDeJour = classeDB[userID].lastRequest[0];
+			const startDate = classeDB[userID].lastRequest[1];
+		
+			const newStart = new Date(startDate);
+			const newEnd = new Date(startDate);
+		
+			newStart.setDate(newStart.getDate() - 1);
+			newEnd.setDate(newEnd.getDate() - 1);
+		
+			const newStartString = newStart.toISOString().split('T')[0];
+			const newEndString = newEnd.toISOString().split('T')[0];
+		
+			const classe = classeDB[userID].classe;
+			if (nbDeJour > 1) {
+				return interaction.reply({
+					content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
+					ephemeral: true,  // Réponse invisible pour les autres utilisateurs (optionnel)
+				});
+			}
+		
+			const calendarRes = await getCalendar(newStartString, newEndString, classe);
+			const eventDetails = await Promise.all(
+				calendarRes.map((event) => getEvent(event.id))
+			);
+			const eventDetailsArray = Object.values(eventDetails);
+		
+			if (eventDetailsArray.length === 0) {
+				return interaction.reply({
+					content: "Aucun cours trouvé pour cette période.",
+					ephemeral: true,
+				});
+			}
+		
+			const startDateFormatted = formatDateForFileName(newStartString);
+			const endDateFormatted = formatDateForFileName(newEndString);
+			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
+		
+			if (!fs.existsSync(fileName)) {
+				await generateImage(classe, eventDetailsArray);
+			}
+
+			// Bouton d'interaction pour changer de jour
+            const row = {
+                type: "ACTION_ROW",
+                components: [
+                    {
+                        type: "BUTTON",
+                        label: "Jour précédent",
+                        style: "PRIMARY",
+                        customId: `previous`,
+                    },
+                    {
+                        type: "BUTTON",
+                        label: "Jour suivant",
+                        style: "PRIMARY",
+                        customId: `next`,
+                    },
+                ],
+            };
+		
+			// Supprimer l'interaction originale
+			await interaction.message.delete();
+		
+			// Envoyer un nouveau message avec le fichier joint
+			await interaction.channel.send({
+				files: [fileName],
+				components: [row],
+			});
+		}
+		
 	}
 });

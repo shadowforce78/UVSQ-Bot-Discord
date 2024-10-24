@@ -81,13 +81,12 @@ module.exports = {
                     classe: classeUser,
                     dailyReminder: false,
                     weeklyReminder: false,
+                    lastRequest: ["None", "None"],
                 };
                 // console.log("Nouvel utilisateur ajouté :", classeDB[user]);
             } else {
                 // Si l'utilisateur existe, on met à jour ses informations
                 classeDB[user].classe = classeUser  // Mettre à jour la classe (exemple)
-                classeDB[user].dailyReminder = false;  // Mettre à jour dailyReminder (exemple)
-                classeDB[user].weeklyReminder = false;  // Mettre à jour weeklyReminder (exemple)
                 // console.log("Informations utilisateur mises à jour :", classeDB[user]);
             }
 
