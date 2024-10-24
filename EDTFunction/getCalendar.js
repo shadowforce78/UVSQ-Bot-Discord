@@ -25,7 +25,7 @@ async function getCalendar(startDate, endDate, classe) {
 
         // Vérifier s'il y a des événements
         if (!Array.isArray(events) || events.length === 0) {
-            console.log("Aucun événement trouvé pour la période donnée.");
+            // console.log("Aucun événement trouvé pour la période donnée.");
             return [];
         }
 

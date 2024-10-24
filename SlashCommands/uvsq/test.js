@@ -9,20 +9,6 @@ module.exports = {
     description: "Commande permettant de générer l'emploi du temps",
     userperm: [""],
     botperm: [""],
-    options: [
-        {
-            name: "startdate",
-            description: "Date de début de l'emploi du temps (format : YYYY-MM-DD)",
-            type: "STRING",
-            required: true,
-        },
-        {
-            name: "enddate",
-            description: "Date de fin de l'emploi du temps (format : YYYY-MM-DD)",
-            type: "STRING",
-            required: true,
-        },
-    ],
     /**
      *
      * @param {Client} client
@@ -30,8 +16,8 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, interaction, args) => {
-        let startDate = interaction.options.getString("startdate");
-        let endDate = interaction.options.getString("enddate");
+        let startDate = "2024-10-24"
+        let endDate = "2024-10-24"
 
         let user = interaction.user.id;
         let userDB = classeDB[user];
