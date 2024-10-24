@@ -156,23 +156,23 @@ module.exports = {
             }
 
             // Bouton d'interaction pour changer de jour
-            const row = {
-                type: "ACTION_ROW",
-                components: [
-                    {
-                        type: "BUTTON",
-                        label: "Jour précédent",
-                        style: "PRIMARY",
-                        customId: `previous`,
-                    },
-                    {
-                        type: "BUTTON",
-                        label: "Jour suivant",
-                        style: "PRIMARY",
-                        customId: `next`,
-                    },
-                ],
-            };
+            // const row = {
+            //     type: "ACTION_ROW",
+            //     components: [
+            //         {
+            //             type: "BUTTON",
+            //             label: "Jour précédent",
+            //             style: "PRIMARY",
+            //             customId: `previous`,
+            //         },
+            //         {
+            //             type: "BUTTON",
+            //             label: "Jour suivant",
+            //             style: "PRIMARY",
+            //             customId: `next`,
+            //         },
+            //     ],
+            // };
 
             
             // Ajouter les données de lastRequest a la db
@@ -184,7 +184,7 @@ module.exports = {
             interaction.followUp({
                 content: "Voici votre emploi du temps pour la période demandée :",
                 files: [fileName],
-                components: [row],
+                // components: [row],
             });
         } catch (err) {
             console.error(err);
