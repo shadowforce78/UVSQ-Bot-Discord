@@ -16,6 +16,15 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, interaction, args) => {
+
+
+        if (interaction.user.id !== '918916801994309752'){
+            return interaction.followUp({
+                content: "Vous n'avez pas la permission d'utiliser cette commande.",
+                ephemeral: true,
+            });
+        }
+
         let startDate = "2024-10-24"
         let endDate = "2024-10-24"
 
