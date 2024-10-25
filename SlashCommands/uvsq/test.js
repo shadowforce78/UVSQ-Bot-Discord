@@ -147,15 +147,33 @@ module.exports = {
                 components: [
                     {
                         type: "BUTTON",
+                        label: "Semaine précédente",
+                        style: "PRIMARY",
+                        customId: `previousWeek`,
+                    },
+                    {
+                        type: "BUTTON",
                         label: "Jour précédent",
                         style: "PRIMARY",
                         customId: `previous`,
                     },
                     {
                         type: "BUTTON",
+                        label: "Aujourd'hui",
+                        style: "PRIMARY",
+                        customId: `today`,
+                    },
+                    {
+                        type: "BUTTON",
                         label: "Jour suivant",
                         style: "PRIMARY",
                         customId: `next`,
+                    },
+                    {
+                        type: "BUTTON",
+                        label: "Semaine suivante",
+                        style: "PRIMARY",
+                        customId: `nextWeek`,
                     },
                 ],
             };
