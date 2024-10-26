@@ -1,624 +1,71 @@
-const client = require("../index");
-const fs = require("fs");
-const classeDB = require("../db.json");
+import { InteractionType } from "discord.js";
+import { client } from "../bot.js";
 
-const { getCalendar, getEvent } = require("../EDTFunction/getCalendar");
-const { generateImage } = require("../EDTFunction/generateImage.js");
-
+/**
+ * Handles interaction events, such as slash commands.
+ * @param {Interaction} interaction - The interaction received from Discord.
+ */
 client.on("interactionCreate", async (interaction) => {
-	// Slash Command Handling
-	if (interaction.isCommand()) {
-		await interaction.deferReply({ ephemeral: false }).catch(() => { });
-
-		const cmd = client.slashCommands.get(interaction.commandName);
-		if (!cmd) return interaction.followUp({ content: "An error has occured " });
-
-		const args = [];
-
-		for (let option of interaction.options.data) {
-			if (option.type === "SUB_COMMAND") {
-				if (option.name) args.push(option.name);
-				option.options?.forEach((x) => {
-					if (x.value) args.push(x.value);
-				});
-			} else if (option.value) args.push(option.value);
-		}
-		const userperm = interaction.member.permissions.has(cmd.userperm);
-
-		if (!userperm) {
-			return interaction.followUp({
-				content: `You need \`${cmd.userperm || []}\` Permissions`,
-			});
-		}
-
-		const botperm = interaction.guild.me.permissions.has(cmd.botperm);
-		if (!botperm) {
-			return interaction.followUp({
-				content: `I need \`${cmd.botperm || []}\` Permissions`,
-			});
-		}
-		interaction.member = interaction.guild.members.cache.get(
-			interaction.user.id
-		);
-
-		cmd.run(client, interaction, args);
-	}
-
-	// Context Menu Handling
-	if (interaction.isContextMenu()) {
-		await interaction.deferReply({ ephemeral: false });
-		const command = client.slashCommands.get(interaction.commandName);
-		if (command) command.run(client, interaction);
-	}
-
-	if (interaction.isButton()) {
-		let userID = interaction.user.id;
-		let userDB = classeDB[userID];
-
-		// Si l'utilisateur n'a pas de classe
-		if (!userDB) {
-			return interaction.followUp({
-				content:
-					"Vous n'avez pas de classe définie !\nVeuillez définir votre classe avec la commande `/classe`",
-			});
-		}
-
-		// Change the value of dailyReminder and weeklyReminder in the database to true
-		if (interaction.customId === "daily") {
-			if (classeDB[userID].dailyReminder == true) {
-				classeDB[userID].dailyReminder = false;
-				interaction.reply({
-					content: `Daily Reminder Disabled for <@!${userID}>`,
-					ephemeral: true,
-				});
-			} else {
-				classeDB[userID].dailyReminder = true;
-				interaction.reply({
-					content: `Daily Reminder Set for <@!${userID}>`,
-					ephemeral: true,
-				});
-			}
-
-			// Save the database
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-
-		if (interaction.customId === "weekly") {
-			if (classeDB[userID].weeklyReminder == true) {
-				classeDB[userID].weeklyReminder = false;
-				interaction.reply({
-					content: `Weekly Reminder Disabled for <@!${userID}>`,
-					ephemeral: true,
-				});
-			} else {
-				classeDB[userID].weeklyReminder = true;
-
-				interaction.reply({
-					content: `Weekly Reminder Set for <@!${userID}>`,
-					ephemeral: true,
-				});
-			}
-
-			// Save the database
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-
-		if (interaction.customId === "disable") {
-			classeDB[userID].dailyReminder = false;
-			classeDB[userID].weeklyReminder = false;
-
-			// Save the database
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-
-			interaction.reply({
-				content: `Reminder Disabled for <@!${userID}>`,
-				ephemeral: true,
-			});
-		}
-
-
-
-		// CHANGEMENT DE JOUR
-		if (interaction.customId === `previous`) {
-
-			function formatDateForFileName(dateStr) {
-				const date = new Date(dateStr);
-				const day = String(date.getDate()).padStart(2, '0');
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const year = date.getFullYear();
-				return `${day}-${month}-${year}`;
-			}
-		
-			const nbDeJour = classeDB[userID].lastRequest[0];
-			const startDate = classeDB[userID].lastRequest[1];
-		
-			const newStart = new Date(startDate);
-			const newEnd = new Date(startDate);
-		
-			newStart.setDate(newStart.getDate() - 1);
-			newEnd.setDate(newEnd.getDate() - 1);
-		
-			const newStartString = newStart.toISOString().split('T')[0];
-			const newEndString = newEnd.toISOString().split('T')[0];
-		
-			const classe = classeDB[userID].classe;
-			if (nbDeJour > 1) {
-				return interaction.reply({
-					content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
-					ephemeral: true,  // Réponse invisible pour les autres utilisateurs (optionnel)
-				});
-			}
-		
-			const calendarRes = await getCalendar(newStartString, newEndString, classe);
-			const eventDetails = await Promise.all(
-				calendarRes.map((event) => getEvent(event.id))
-			);
-			const eventDetailsArray = Object.values(eventDetails);
-		
-			if (eventDetailsArray.length === 0) {
-				return interaction.reply({
-					content: "Aucun cours trouvé pour cette période.",
-					ephemeral: true,
-				});
-			}
-		
-			const startDateFormatted = formatDateForFileName(newStartString);
-			const endDateFormatted = formatDateForFileName(newEndString);
-			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-			// Mis à jour de lastRequest
-			classeDB[userID].lastRequest = [1, newStartString];
-		
-			if (!fs.existsSync(fileName)) {
-				await generateImage(classe, eventDetailsArray);
-			}
-
-			// Bouton d'interaction pour changer de jour
-            const row = {
-				type: "ACTION_ROW",
-				components: [
-					{
-						type: "BUTTON",
-						label: "Semaine précédente",
-						style: "PRIMARY",
-						customId: `previousWeek`,
-					},
-					{
-						type: "BUTTON",
-						label: "Jour précédent",
-						style: "PRIMARY",
-						customId: `previous`,
-					},
-					{
-						type: "BUTTON",
-						label: "Aujourd'hui",
-						style: "PRIMARY",
-						customId: `today`,	
-					},
-					{
-						type: "BUTTON",
-						label: "Jour suivant",
-						style: "PRIMARY",
-						customId: `next`,
-					},
-					{
-						type: "BUTTON",
-						label: "Semaine suivante",
-						style: "PRIMARY",
-						customId: `nextWeek`,
-					},
-				],
-			};
-		
-			// Supprimer l'interaction originale
-			await interaction.message.delete();
-		
-			// Envoyer un nouveau message avec le fichier joint
-			await interaction.channel.send({
-				files: [fileName],
-				components: [row],
-			});
-
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-
-
-		if (interaction.customId === `next`) {
-
-			function formatDateForFileName(dateStr) {
-				const date = new Date(dateStr);
-				const day = String(date.getDate()).padStart(2, '0');
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const year = date.getFullYear();
-				return `${day}-${month}-${year}`;
-			}
-		
-			const nbDeJour = classeDB[userID].lastRequest[0];
-			const startDate = classeDB[userID].lastRequest[1];
-		
-			const newStart = new Date(startDate);
-			const newEnd = new Date(startDate);
-		
-			newStart.setDate(newStart.getDate() + 1);
-			newEnd.setDate(newEnd.getDate() + 1);
-		
-			const newStartString = newStart.toISOString().split('T')[0];
-			const newEndString = newEnd.toISOString().split('T')[0];
-		
-			const classe = classeDB[userID].classe;
-			if (nbDeJour > 1) {
-				return interaction.reply({
-					content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
-					ephemeral: true,  // Réponse invisible pour les autres utilisateurs (optionnel)
-				});
-			}
-		
-			const calendarRes = await getCalendar(newStartString, newEndString, classe);
-			const eventDetails = await Promise.all(
-				calendarRes.map((event) => getEvent(event.id))
-			);
-			const eventDetailsArray = Object.values(eventDetails);
-		
-			if (eventDetailsArray.length === 0) {
-				return interaction.reply({
-					content: "Aucun cours trouvé pour cette période.",
-					ephemeral: true,
-				});
-			}
-		
-			const startDateFormatted = formatDateForFileName(newStartString);
-			const endDateFormatted = formatDateForFileName(newEndString);
-			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-			// Mis à jour de lastRequest
-			classeDB[userID].lastRequest = [1, newStartString];
-		
-			if (!fs.existsSync(fileName)) {
-				await generateImage(classe, eventDetailsArray);
-			}
-
-			// Bouton d'interaction pour changer de jour
-            const row = {
-				type: "ACTION_ROW",
-				components: [
-					{
-						type: "BUTTON",
-						label: "Semaine précédente",
-						style: "PRIMARY",
-						customId: `previousWeek`,
-					},
-					{
-						type: "BUTTON",
-						label: "Jour précédent",
-						style: "PRIMARY",
-						customId: `previous`,
-					},
-					{
-						type: "BUTTON",
-						label: "Aujourd'hui",
-						style: "PRIMARY",
-						customId: `today`,	
-					},
-					{
-						type: "BUTTON",
-						label: "Jour suivant",
-						style: "PRIMARY",
-						customId: `next`,
-					},
-					{
-						type: "BUTTON",
-						label: "Semaine suivante",
-						style: "PRIMARY",
-						customId: `nextWeek`,
-					},
-				],
-			};
-		
-			// Supprimer l'interaction originale
-			await interaction.message.delete();
-		
-			// Envoyer un nouveau message avec le fichier joint
-			await interaction.channel.send({
-				files: [fileName],
-				components: [row],
-			});
-
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-		
-		if (interaction.customId === 'previousWeek'){
-			function formatDateForFileName(dateStr) {
-				const date = new Date(dateStr);
-				const day = String(date.getDate()).padStart(2, '0');
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const year = date.getFullYear();
-				return `${day}-${month}-${year}`;
-			}
-
-			const nbDeJour = classeDB[userID].lastRequest[0];
-			const startDate = classeDB[userID].lastRequest[1];
-
-			const newStart = new Date(startDate);
-			const newEnd = new Date(startDate);
-
-			newStart.setDate(newStart.getDate() - 7);
-			newEnd.setDate(newEnd.getDate() - 7);
-
-			const newStartString = newStart.toISOString().split('T')[0];
-			const newEndString = newEnd.toISOString().split('T')[0];
-
-			const classe = classeDB[userID].classe;
-			if (nbDeJour > 1) {
-				return interaction.reply({
-					content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
-					ephemeral: true,  // Réponse invisible pour les autres utilisateurs (optionnel)
-				});
-			}
-
-			const calendarRes = await getCalendar(newStartString, newEndString, classe);
-			const eventDetails = await Promise.all(
-				calendarRes.map((event) => getEvent(event.id))
-			);
-			const eventDetailsArray = Object.values(eventDetails);
-
-			if (eventDetailsArray.length === 0) {
-				return interaction.reply({
-					content: "Aucun cours trouvé pour cette période.",
-					ephemeral: true,
-				});
-			}
-
-			const startDateFormatted = formatDateForFileName(newStartString);
-			const endDateFormatted = formatDateForFileName(newEndString);
-			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-			// Mis à jour de lastRequest
-			classeDB[userID].lastRequest = [1, newStartString];
-
-			if (!fs.existsSync(fileName)) {
-				await generateImage(classe, eventDetailsArray);
-			}
-
-			// Bouton d'interaction pour changer de jour
-			const row = {
-				type: "ACTION_ROW",
-				components: [
-					{
-						type: "BUTTON",
-						label: "Semaine précédente",
-						style: "PRIMARY",
-						customId: `previousWeek`,
-					},
-					{
-						type: "BUTTON",
-						label: "Jour précédent",
-						style: "PRIMARY",
-						customId: `previous`,
-					},
-					{
-						type: "BUTTON",
-						label: "Aujourd'hui",
-						style: "PRIMARY",
-						customId: `today`,	
-					},
-					{
-						type: "BUTTON",
-						label: "Jour suivant",
-						style: "PRIMARY",
-						customId: `next`,
-					},
-					{
-						type: "BUTTON",
-						label: "Semaine suivante",
-						style: "PRIMARY",
-						customId: `nextWeek`,
-					},
-				],
-			};
-
-			// Supprimer l'interaction originale
-			await interaction.message.delete();
-
-			// Envoyer un nouveau message avec le fichier joint
-			await interaction.channel.send({
-				files: [fileName],
-				components: [row],
-			});
-
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-
-		if (interaction.customId === 'nextWeek'){
-			function formatDateForFileName(dateStr) {
-				const date = new Date(dateStr);
-				const day = String(date.getDate()).padStart(2, '0');
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const year = date.getFullYear();
-				return `${day}-${month}-${year}`;
-			}
-
-			const nbDeJour = classeDB[userID].lastRequest[0];
-			const startDate = classeDB[userID].lastRequest[1];
-
-			const newStart = new Date(startDate);
-			const newEnd = new Date(startDate);
-
-			newStart.setDate(newStart.getDate() + 7);
-			newEnd.setDate(newEnd.getDate() + 7);
-
-			const newStartString = newStart.toISOString().split('T')[0];
-			const newEndString = newEnd.toISOString().split('T')[0];
-
-			const classe = classeDB[userID].classe;
-			if (nbDeJour > 1) {
-				return interaction.reply({
-					content: "Vous ne pouvez pas demander le jour précédent si vous avez demandé plus d'un jour",
-					ephemeral: true,  // Réponse invisible pour les autres utilisateurs (optionnel)
-				});
-			}
-
-			const calendarRes = await getCalendar(newStartString, newEndString, classe);
-			const eventDetails = await Promise.all(
-				calendarRes.map((event) => getEvent(event.id))
-			);
-			const eventDetailsArray = Object.values(eventDetails);
-
-			if (eventDetailsArray.length === 0) {
-				return interaction.reply({
-					content: "Aucun cours trouvé pour cette période.",
-					ephemeral: true,
-				});
-			}
-
-			const startDateFormatted = formatDateForFileName(newStartString);
-			const endDateFormatted = formatDateForFileName(newEndString);
-			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-			// Mis à jour de lastRequest
-			classeDB[userID].lastRequest = [1, newStartString];
-
-			if (!fs.existsSync(fileName)) {
-				await generateImage(classe, eventDetailsArray);
-			}
-
-			// Bouton d'interaction pour changer de jour
-			const row = {
-				type: "ACTION_ROW",
-				components: [
-					{
-						type: "BUTTON",
-						label: "Semaine précédente",
-						style: "PRIMARY",
-						customId: `previousWeek`,
-					},
-					{
-						type: "BUTTON",
-						label: "Jour précédent",
-						style: "PRIMARY",
-						customId: `previous`,
-					},
-					{
-						type: "BUTTON",
-						label: "Aujourd'hui",
-						style: "PRIMARY",
-						customId: `today`,	
-					},
-					{
-						type: "BUTTON",
-						label: "Jour suivant",
-						style: "PRIMARY",
-						customId: `next`,
-					},
-					{
-						type: "BUTTON",
-						label: "Semaine suivante",
-						style: "PRIMARY",
-						customId: `nextWeek`,
-					},
-				],
-			};
-
-			// Supprimer l'interaction originale
-			await interaction.message.delete();
-
-			// Envoyer un nouveau message avec le fichier joint
-			await interaction.channel.send({
-				files: [fileName],
-				components: [row],
-			});
-			// Save the database
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-
-		if (interaction.customId === 'today'){
-			function formatDateForFileName(dateStr) {
-				const date = new Date(dateStr);
-				const day = String(date.getDate()).padStart(2, '0');
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const year = date.getFullYear();
-				return `${day}-${month}-${year}`;
-			}
-
-			const startDate = new Date();
-			const endDate = new Date();
-
-			const startDateString = startDate.toISOString().split('T')[0];
-			const endDateString = endDate.toISOString().split('T')[0];
-
-			const classe = classeDB[userID].classe;
-
-			const calendarRes = await getCalendar(startDateString, endDateString, classe);
-			const eventDetails = await Promise.all(
-				calendarRes.map((event) => getEvent(event.id))
-			);
-			const eventDetailsArray = Object.values(eventDetails);
-
-			if (eventDetailsArray.length === 0) {
-				return interaction.reply({
-					content: "Aucun cours trouvé pour cette période.",
-					ephemeral: true,
-				});
-			}
-
-			const startDateFormatted = formatDateForFileName(startDateString);
-			const endDateFormatted = formatDateForFileName(endDateString);
-			const fileName = `./EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-			// Mis à jour de lastRequest
-			classeDB[userID].lastRequest = [1, startDateString];
-
-			if (!fs.existsSync(fileName)) {
-				await generateImage(classed, eventDetailsArray);
-			}
-			
-			// Bouton d'interaction pour changer de jour
-			const row = {
-				type: "ACTION_ROW",
-				components: [
-					{
-						type: "BUTTON",
-						label: "Semaine précédente",
-						style: "PRIMARY",
-						customId: `previousWeek`,
-					},
-					{
-						type: "BUTTON",
-						label: "Jour précédent",
-						style: "PRIMARY",
-						customId: `previous`,
-					},
-					{
-						type: "BUTTON",
-						label: "Aujourd'hui",
-						style: "PRIMARY",
-						customId: `today`,	
-					},
-					{
-						type: "BUTTON",
-						label: "Jour suivant",
-						style: "PRIMARY",
-						customId: `next`,
-					},
-					{
-						type: "BUTTON",
-						label: "Semaine suivante",
-						style: "PRIMARY",
-						customId: `nextWeek`,
-					},
-				],
-			};
-
-			// Supprimer l'interaction originale
-			await interaction.message.delete();
-
-			// Envoyer un nouveau message avec le fichier joint
-			await interaction.channel.send({
-				files: [fileName],
-				components: [row],
-			});
-
-			// Save the database
-			fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 2));
-		}
-	}
+  try {
+    // Ignore interactions from bots or outside of guilds
+    if (interaction.user.bot || !interaction.guild) return;
+
+    // Check if the interaction is a command
+    if (interaction.type == InteractionType.ApplicationCommand) {
+      // Get the command object from the command collection
+      const command = client.scommands.get(interaction.commandName);
+
+      // If command not found, respond with error message
+      if (!command) {
+        return client.send(interaction, {
+          content: `\`${interaction.commandName}\` is not a valid command !!`,
+          ephemeral: true,
+        });
+      }
+
+      // Extract member and command permissions
+      const { member, guild } = interaction;
+      const { userPermissions, botPermissions } = command;
+
+      // Check user permissions
+      const missingUserPerms = userPermissions.filter(
+        (perm) => !member.permissions.has(perm)
+      );
+      if (missingUserPerms.length > 0) {
+        await client.sendEmbed(
+          interaction,
+          `You are missing the following permissions: \`${missingUserPerms.join(
+            ", "
+          )}\``
+        );
+        return;
+      }
+
+      // Check bot permissions
+      const missingBotPerms = botPermissions.filter(
+        (perm) => !guild.members.me.permissions.has(perm)
+      );
+      if (missingBotPerms.length > 0) {
+        await client.sendEmbed(
+          interaction,
+          `I am missing the following permissions: \`${missingBotPerms.join(
+            ", "
+          )}\``
+        );
+        return;
+      }
+
+      // Run the command
+      await command.run({ client, interaction });
+    }
+  } catch (error) {
+    // Log any errors that occur
+    console.error("An error occurred in interactionCreate event:", error);
+
+    // Send a generic error message to the user
+    await client.sendEmbed(
+      interaction,
+      "An error occurred while processing your command. Please try again later."
+    );
+  }
 });

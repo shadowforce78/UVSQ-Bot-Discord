@@ -1,103 +1,153 @@
-# 📚 Bot Discord EDT - IUT
+# Hi, I'm Kabir! 👋
 
-Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructions pour l'utiliser et contribuer.
+I'm a Discord Bot Developer and here is mine bot handler
 
-## 🚀 Utilisation
+## Installation | How to use the Handler
 
-### Commandes disponibles
+1. Clone this repository.
+2. Fill in the required details in **`settings/config.js`**.
+3. Run `npm install` to install dependencies.
+4. Start the bot with `node index.js`.
 
-1. **`/classe`**
+### _Modify - config.js_
 
-   - **Description** : Permet de sélectionner une classe pour les commandes suivantes.
-   - **Argument** :
-     - `classe` (string) : Nom ou code de la classe (ex : "INF1-B2").
-   - **Exemple** : `/classe INF1-B2`
+```js
+import { Colors } from "discord.js";
 
-2. **`/edt`**
-   - **Description** : Récupère l'emploi du temps pour une période donnée.
-   - **Arguments** :
-     - `debut` (date) : Date de début au format `YYYY-MM-DD`.
-     - `fin` (date) : Date de fin au format `YYYY-MM-DD`.
-   - **Exemple** : `/edt 2024-10-01 2024-10-07`
-   - **Remarque** : Pour des raisons de performance, la période ne doit pas dépasser 4 jours affichables.
+const settings = {
+  TOKEN: process.env.TOKEN || "BOT_TOKEN",
+  PREFIX: process.env.PREFIX || "BOT_PREFIX",
+  Owners: ["OwnersId", "OwnersId"],
+  Slash: {
+    Global: false,
+    GuildID: process.env.GuildID || "GUILD_ID",
+  },
+};
 
-## 🛠️ Installation
+export default settings;
+```
 
-Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez ces étapes :
+## Handler Features
 
-1. **Installer Node.js**
+- Easy-to-use Handler
+- Event handling support
+- Slash commands
+- Message commands
+- Built on [discord.js](https://discord.js.org/#/)
+- Code snippets for commands
+- Subdirectory support in the commands folder
+- Code suggestions in Handler
 
-   - Assurez-vous d'avoir installé Node.js en version 20 ou supérieure. Vous pouvez vérifier votre version avec la commande :
-     ```bash
-     node -v
-     ```
+## Feedback
 
-2. **Cloner le dépôt**
+If you have any feedback or need assistance, please join out [Discord Server](https://discord.gg/PcUVWApWN3)
 
-   - Clonez le dépôt GitHub sur votre machine locale avec la commande suivante :
-     ```bash
-     git clone https://github.com/shadowforce78/UVSQ-Bot-Discord.git
-     ```
+## Usage/Examples
 
-3. **Installer les dépendances**
+- Commands Example
 
-   - Après avoir cloné le dépôt, placez-vous dans le répertoire du projet et installez les dépendances en exécutant :
-     ```bash
-     npm install
-     ```
+# Slash Chat Input Command
 
-4. **Créer un fichier `config.json`**
+```js
+import { ApplicationCommandType, PermissionFlagsBits } from "discord.js";
 
-   - Dans le répertoire principal du projet, créez un fichier `config.json` avec le contenu suivant :
-     ```json
-     {
-       "token": "",
-       "prefix": ""
-     }
-     ```
-   - Remplissez les champs :
-     - `token` : Votre token de bot Discord.
-     - `prefix` : Le préfixe de commande souhaité (ex : `u!`).
-   - Vous pouvez directement copier le fichier `config.json.example` avec la commande suivante :
-     ```bash
-     cp config.json.example config.json
-     ```
+/**
+ * @type {import("../../../index.js").Scommand}
+ */
+export default {
+  name: "",
+  description: "",
+  userPermissions: [PermissionFlagsBits.SendMessages],
+  botPermissions: [
+    PermissionFlagsBits.SendMessages,
+    PermissionFlagsBits.EmbedLinks,
+  ],
+  category: "",
+  type: ApplicationCommandType.ChatInput,
 
-5. **Créer un fichier `db.json`**
+  run: async ({ client, interaction }) => {
+    // Code
+  },
+};
+```
 
-   - Dans le répertoire principal du projet, créez un fichier `db.json` avec le contenu suivant :
-     ```json
-     {}
-     ```
-   - Vous pouvez directement copier le fichier `db.json.example` avec la commande suivante :
-     ```bash
-     cp db.json.example db.json
-     ```
+# Slash Message Input Command
 
-6. **Lancer le bot**
-   - Pour démarrer le bot, exécutez la commande suivante :
-     ```bash
-     node .
-     ```
+```js
+import { ApplicationCommandType } from "discord.js";
 
-## 📝 TODO List
+/**
+ * @type {import("../../..").CMcommand}
+ */
+export default {
+  name: "",
+  category: "",
+  type: ApplicationCommandType.Message,
 
-- [ ] Ajouter un moyen de choisir le type d'edt (par jour ou par semaine)
-- [ ] Ajouter le système de rappel par semaine (configReminder).
-- [ ] Ajouter un moyen interactif pour ajouter des nouvelles classes (github actions dans un ficher json externe).
-- [ ] Régler le problème des doubles cours (ex : le 2024-10-17, deux cours en même temps mais inversés à la moitié).
-- [x] Ajouter deux boutons sous l'image pour changer de semaine (Précédent et Suivant).
-- [x] Ajouter deux boutons sous l'image pour changer de jour (Précédent et Suivant).
-- [x] Ajouter un système de sauvegarde d'images de cours pour éviter de les générer à chaque fois.
-- [x] Changer le système de génération d'image pour le déployer sur un serveur.
-- [x] Adapter le HTML pour trois jours (adapter la grille pour 1, 2, 3 ou 4 jours).
-- [x] Ajouter une nouvelle base de données en local (json) parce MongoDB c'est chiant.
-- [x] Régler la fonction `group` dans `getCalendar.js`.
-- [x] Vérifier pour tous types de classes (pas uniquement Informatique).
+  run: async ({ client, interaction }) => {
+    // Code
+  },
+};
+```
 
-## 🙏 Crédits
+# Slash User Input Command
 
-- Un grand merci à [ItsTheSky](https://github.com/ItsTheSky) pour son aide avec certains problèmes serveur.
-- Merci à [Escartem](https://github.com/Escartem/EDTVelizy) pour avoir fourni les endpoints à utiliser pour les emplois du temps.
+```js
+const { ApplicationCommandType } = require("discord.js");
 
----
+/**
+ * @type {import("../../..").CUcommand}
+ */
+export default {
+  name: "",
+  category: "",
+  type: ApplicationCommandType.User,
+
+  run: async ({ client, interaction }) => {
+    // Code
+  },
+};
+```
+
+# Message/Prefix Command
+
+```js
+import { PermissionFlagsBits } from "discord.js";
+
+/**
+ * @type {import("../../../index.js").Mcommand}
+ */
+export default {
+  name: "",
+  description: "",
+  userPermissions: [PermissionFlagsBits.SendMessages],
+  botPermissions: [
+    PermissionFlagsBits.SendMessages,
+    PermissionFlagsBits.EmbedLinks,
+  ],
+  category: "",
+  cooldown: 5,
+
+  run: async ({ client, message, args, prefix }) => {
+    // Code
+  },
+};
+```
+
+## License
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). See the [LICENSE](LICENSE) file for details.
+
+# Acknowledgements
+
+Thank you for considering the use of Kabir's Discord Bot Handler! If you find it helpful, we encourage you to give it a ⭐️.
+
+## Contributing
+
+If you encounter any bugs or have suggestions for improvement, please open a pull request. Your contributions are highly appreciated!
+
+## Support
+
+For any inquiries or assistance, feel free to reach out to us on our [Discord Server](https://discord.gg/PcUVWApWN3).
+
+Happy coding! 🚀
