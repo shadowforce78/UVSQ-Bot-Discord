@@ -3,6 +3,7 @@ package-lock.json
 
 # DO NOT REMOVE THESE FOR SECURITY
 src/config.js
+src/EDTsaves/*
 .env
 database.yml
 db.json

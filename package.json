@@ -11,6 +11,8 @@
   "author": "TFAGaming",
   "license": "GPL-3.0",
   "dependencies": {
+    "axios": "^1.7.7",
+    "canvas": "^2.11.2",
     "colors": "^1.4.0",
     "discord.js": "^14.16.0",
     "discordjs-v14-bot-template": "file:",
