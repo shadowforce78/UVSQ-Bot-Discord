@@ -1,5 +1,8 @@
 node_modules
 package-lock.json
-config.json
-settings
-EDTsaves/config.js
+
+# DO NOT REMOVE THESE FOR SECURITY
+src/config.js
+.env
+database.yml
+terminal.log

@@ -1,153 +1,157 @@
-# Hi, I'm Kabir! 👋
+# <samp>DiscordJS-V14-Bot-Template</samp> v3
 
-I'm a Discord Bot Developer and here is mine bot handler
+A Discord bot commands, components and events handler based on **discord.js v14** and fully written in JavaScript.
 
-## Installation | How to use the Handler
+Did you like the project? Click on the star button (⭐️) right above your screen, thank you!
 
-1. Clone this repository.
-2. Fill in the required details in **`settings/config.js`**.
-3. Run `npm install` to install dependencies.
-4. Start the bot with `node index.js`.
+## Features
+- Updated to the latest version of [discord.js v14.x](https://github.com/discordjs/discord.js/releases).
+- Supports all possible type of commands.
+    - Message commands.
+    - Application commands:
+        - Chat Input
+        - User context
+        - Message context
+- Handles components.
+    - Buttons
+    - Select menus
+    - Modals
+    - Autocomplete
+- Easy and simple to use.
+- Advanced command options.
+- Simple Database included (YAML).
 
-### _Modify - config.js_
+## Commands, Components, and Events structure:
+### Message commands:
 
-```js
-import { Colors } from "discord.js";
+[`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype).<br>
+`Awaitable` means the function might be **async**.
 
-const settings = {
-  TOKEN: process.env.TOKEN || "BOT_TOKEN",
-  PREFIX: process.env.PREFIX || "BOT_PREFIX",
-  Owners: ["OwnersId", "OwnersId"],
-  Slash: {
-    Global: false,
-    GuildID: process.env.GuildID || "GUILD_ID",
-  },
-};
-
-export default settings;
+```ts
+new MessageCommand({
+    command: {
+        name: string, // The command name
+        description?: string, // The command description (optional)
+        aliases?: string[], // The command aliases (optional)
+        permissions?: PermissionResolvable[], // The command permissions (optional)
+    },
+    options?: Partial<{
+        cooldown: number, // The command cooldown, in milliseconds
+        botOwner: boolean, // Bot owner can only run it? (true = yes, false = no)
+        guildOwner: boolean, // Guild owner can only run it? (true = yes, false = no)
+        botDevelopers: boolean, // Bot developers can only run it? (true = yes, false = no)
+        nsfw: boolean // The command contains NSFW content? (true = yes, false = no)
+    }>,
+    run: Awaitable<(client: DiscordBot, message: Message, args: string[]) => void> // The main function to execute the command
+});
 ```
 
-## Handler Features
+### Application commands (Chat input, User context, Message context):
 
-- Easy-to-use Handler
-- Event handling support
-- Slash commands
-- Message commands
-- Built on [discord.js](https://discord.js.org/#/)
-- Code snippets for commands
-- Subdirectory support in the commands folder
-- Code suggestions in Handler
+[`APIApplicationCommand`](https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure), [`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype).<br>
+`Awaitable` means the function might be **async**.
 
-## Feedback
-
-If you have any feedback or need assistance, please join out [Discord Server](https://discord.gg/PcUVWApWN3)
-
-## Usage/Examples
-
-- Commands Example
-
-# Slash Chat Input Command
-
-```js
-import { ApplicationCommandType, PermissionFlagsBits } from "discord.js";
-
-/**
- * @type {import("../../../index.js").Scommand}
- */
-export default {
-  name: "",
-  description: "",
-  userPermissions: [PermissionFlagsBits.SendMessages],
-  botPermissions: [
-    PermissionFlagsBits.SendMessages,
-    PermissionFlagsBits.EmbedLinks,
-  ],
-  category: "",
-  type: ApplicationCommandType.ChatInput,
-
-  run: async ({ client, interaction }) => {
-    // Code
-  },
-};
+```ts
+new ApplicationCommand({
+    command: APIApplicationCommand,
+    options?: Partial<{
+        cooldown: number, // The command cooldown, in milliseconds
+        botOwner: boolean, // Bot owner can only run it? (true = yes, false = no)
+        guildOwner: boolean, // Guild owner can only run it? (true = yes, false = no)
+        botDevelopers: boolean, // Bot developers can only run it? (true = yes, false = no)
+    }>,
+    run: Awaitable<(client: DiscordBot, interaction: Interaction) => void> // The main function to execute the command
+});
 ```
 
-# Slash Message Input Command
+### Components:
+#### Autocomplete:
 
-```js
-import { ApplicationCommandType } from "discord.js";
+`Awaitable` means the function might be **async**.
 
-/**
- * @type {import("../../..").CMcommand}
- */
-export default {
-  name: "",
-  category: "",
-  type: ApplicationCommandType.Message,
-
-  run: async ({ client, interaction }) => {
-    // Code
-  },
-};
+```ts
+new AutocompleteComponent({
+    commandName: string,
+    run: Awaitable<(client: DiscordBot, interaction: AutocompleteInteraction) => void> // The main function to execute the command
+});
 ```
 
-# Slash User Input Command
+#### Buttons, Select Menus, and Modals:
 
-```js
-const { ApplicationCommandType } = require("discord.js");
+[`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype).<br>
+`Awaitable` means the function might be **async**.
 
-/**
- * @type {import("../../..").CUcommand}
- */
-export default {
-  name: "",
-  category: "",
-  type: ApplicationCommandType.User,
-
-  run: async ({ client, interaction }) => {
-    // Code
-  },
-};
+```ts
+new Component({
+    customId: string,
+    type: 'modal' | 'select' | 'button',
+    options?: Partial<{
+        public: boolean // Other users can use the main interaction author button/select? (true = yes, false = no)
+    }>
+    run: Awaitable<(client: DiscordBot, interaction: Interaction) => void> // The main function to execute the command
+});
 ```
 
-# Message/Prefix Command
+### Events:
 
-```js
-import { PermissionFlagsBits } from "discord.js";
+`Awaitable` means the function might be **async**.<br>
+`K` is a type parameter, extends `keyof ClientEvents`.
 
-/**
- * @type {import("../../../index.js").Mcommand}
- */
-export default {
-  name: "",
-  description: "",
-  userPermissions: [PermissionFlagsBits.SendMessages],
-  botPermissions: [
-    PermissionFlagsBits.SendMessages,
-    PermissionFlagsBits.EmbedLinks,
-  ],
-  category: "",
-  cooldown: 5,
-
-  run: async ({ client, message, args, prefix }) => {
-    // Code
-  },
-};
+```ts
+new Event({
+    event: K,
+    once?: boolean, // The event can only happen once? (true = yes, false = no)
+    run: Awaitable<(client: DiscordBot, ...args: ClientEvents[K]) => void>
+});
 ```
 
-## License
+## Dependencies
+- **colors** → latest
+- **discord.js** → 14.13.0 or newer
+- **dotenv** → latest
+- **quick-yaml.db** → latest
 
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/). See the [LICENSE](LICENSE) file for details.
+> [!NOTE]
+> **Node.js v16.11.0** or newer is required to run **discord.js**.
 
-# Acknowledgements
+## Setup
+1. Install a code editor ([Visual Studio Code](https://code.visualstudio.com/Download) for an example).
+2. Download this project as a **.zip** file: [Download](https://github.com/TFAGaming/DiscordJS-V14-Bot-Template/archive/refs/heads/main.zip)
+3. Extract the **.zip** file into a normal folder.
+4. Open your code editor, click on **Open Folder**, and select the new created folder.
+5. Rename the following files:
 
-Thank you for considering the use of Kabir's Discord Bot Handler! If you find it helpful, we encourage you to give it a ⭐️.
+- `src/example.config.js` → `src/config.js`: Used for handler configuration.
+- `.env.example` → `.env`: Used for secrets, like the Discord bot token.
+- `example.database.yml` → `database.yml`: Used as a main file for the database.
+- `example.terminal.log` → `terminal.log`: Used as a clone of terminal (to save previous terminal messages).
+
+6. Fill all the required values in **config.js** and **.env**.
+
+> [!CAUTION]
+> Please remember not to share your Discord bot token! This will give access to attackers to do anything they want with your bot, so please keep the token in a safe place, which is the **.env** file.
+
+7. Initialize a new project: `npm init` (To skip every step, do `npm init -y`).
+8. Install all [required dependencies](#dependencies): `npm install colors discord.js dotenv quick-yaml.db`
+
+9. Run the command `node .` or `npm run start` to start the bot.
+10. Enjoy! The bot should be online.
 
 ## Contributing
+Feel free to fork the repository and submit a new pull request if you wish to contribute to this project.
 
-If you encounter any bugs or have suggestions for improvement, please open a pull request. Your contributions are highly appreciated!
+Before you submit a pull request, ensure you tested it and have no issues. Also, keep the same coding style, which means don't use many unnecessary spaces or tabs.
+
+Thank you to all the people who contributed to **DiscordJS-V14-Bot-Template**!
+
+<img src="https://contrib.rocks/image?repo=TFAGaming/DiscordJS-V14-Bot-Template">
 
 ## Support
+Join our Discord server if you have any questions to ask, or if you have a problem with this project, you can go to the [issues section](https://github.com/TFAGaming/DiscordJS-V14-Bot-Template/issues) and submit a new issue.
 
-For any inquiries or assistance, feel free to reach out to us on our [Discord Server](https://discord.gg/PcUVWApWN3).
+<a href="https://discord.gg/E6VFACWu5V">
+  <img src="https://discord.com/api/guilds/918611797194465280/widget.png?style=banner3">
+</a>
 
-Happy coding! 🚀
+## License
+[**GPL-3.0**](./LICENSE), General Public License v3
