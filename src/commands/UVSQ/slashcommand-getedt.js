@@ -3,7 +3,7 @@ const DiscordBot = require("../../client/DiscordBot.js");
 const ApplicationCommand = require("../../structure/ApplicationCommand.js");
 const fs = require("fs");
 const { getCalendar, getEvent } = require("../../EDTfunction/getCalendar.js");
-const { generateImage } = require("../../EDTFunction/generateImage.js");
+const { generateImage } = require("../../EDTfunction/generateImage.js");
 const classeDB = require('../../../db.json')
 
 module.exports = new ApplicationCommand({
