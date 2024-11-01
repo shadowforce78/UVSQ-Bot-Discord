@@ -16,7 +16,8 @@ module.exports = new ApplicationCommand({
                 name: "startdate",
                 description: "Date de début de l'emploi du temps (format : YYYY-MM-DD)",
                 type: ApplicationCommandOptionType.String,
-                required: true
+                required: true,
+                autocomplete: false,
             },
             {
                 name: "enddate",
