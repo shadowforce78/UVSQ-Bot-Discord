@@ -1,6 +1,6 @@
 const { ChatInputCommandInteraction, ApplicationCommandOptionType } = require("discord.js");
-const DiscordBot = require("../../client/DiscordBot");
-const ApplicationCommand = require("../../structure/ApplicationCommand");
+const DiscordBot = require("../../client/DiscordBot.js");
+const ApplicationCommand = require("../../structure/ApplicationCommand.js");
 const fs = require("fs");
 const { getCalendar, getEvent } = require("../../EDTfunction/getCalendar.js");
 const { generateImage } = require("../../EDTFunction/generateImage.js");
