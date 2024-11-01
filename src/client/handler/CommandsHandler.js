@@ -55,8 +55,8 @@ class CommandsHandler {
                     } else {
                         error('Invalid command type ' + module.__type__ + ' from command file ' + file);
                     }
-                } catch {
-                    error('Unable to load a command from the path: ' + 'src/commands/' + directory + '/' + file);
+                } catch(err) {
+                    error('Unable to load a command from the path: ' + 'src/commands/' + directory + '/' + file + '\n' + err.stack);
                 }
             }
         }
