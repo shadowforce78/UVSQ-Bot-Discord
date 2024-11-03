@@ -24,9 +24,18 @@ class DiscordBot extends Client {
     login_attempts = 0;
     login_timestamp = 0;
     statusMessages = [
-        { name: 'Status 1', type: 4 },
-        { name: 'Status 2', type: 4 },
-        { name: 'Status 3', type: 4 }
+        /*
+        0	Playing	Playing {name}	"Playing Rocket League"
+        1	Streaming	Streaming {details}	"Streaming Rocket League"
+        2	Listening	Listening to {name}	"Listening to Spotify"
+        3	Watching	Watching {name}	"Watching YouTube Together"
+        4	Custom	{emoji} {state}	":smiley: I am cool"
+        5	Competing     Competing in {name}	"Competing in Arena World Championship"
+         */
+        { name: 'UVSQ', type: 3 },
+        { name: '/classe', type: 3 },
+        { name: '/edt', type: 3 },
+        { name: '/help', type: 3 }
     ];
 
     commands_handler = new CommandsHandler(this);
@@ -46,13 +55,13 @@ class DiscordBot extends Client {
             ],
             presence: {
                 activities: [{
-                    name: 'keep this empty',
+                    name: 'UVSQ',
                     type: 4,
-                    state: 'DiscordJS-V14-Bot-Template v3'
+                    state: 'UVSQ'
                 }]
             }
         });
-        
+
         new CommandsListener(this);
         new ComponentsListener(this);
     }
