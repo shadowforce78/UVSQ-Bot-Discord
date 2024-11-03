@@ -206,18 +206,6 @@ async function generateImage(classe, coursParJourArray) {
         });
     });
 
-    //     // Save the image and return the path
-    //     const classeName = classe
-    //     const startDateWithDash = Object.keys(coursParJour)[0].replace(/\//g, '-');
-    //     const endDateWithDash = Object.keys(coursParJour)[Object.keys(coursParJour).length - 1].replace(/\//g, '-');
-
-
-    //     const fileName = `./EDTsaves/${classeName}-${startDateWithDash}-${endDateWithDash}-image.png`;
-    //     const buffer = canvas.toBuffer('image/png');
-    //     fs.writeFileSync(fileName, buffer);
-    //     return fileName;
-    // }
-
     // module.exports = { generateImage };
     function getOriginalDates(courseDates) {
         if (courseDates.length === 0) return { start: null, end: null };
