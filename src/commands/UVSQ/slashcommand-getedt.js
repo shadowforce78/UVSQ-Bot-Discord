@@ -17,14 +17,14 @@ module.exports = new ApplicationCommand({
                 description: "Date de début de l'emploi du temps (format : YYYY-MM-DD)",
                 type: ApplicationCommandOptionType.String,
                 required: true,
-                autocomplete: false,
+                autocomplete: true,
             },
             {
                 name: "enddate",
                 description: "Date de fin de l'emploi du temps (format : YYYY-MM-DD)",
                 type: ApplicationCommandOptionType.String,
                 required: true,
-                autocomplete: false,
+                autocomplete: true,
             },
         ],
     },
@@ -37,8 +37,8 @@ module.exports = new ApplicationCommand({
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (client, interaction) => {
-        let startDate = interaction.options.getString("startdate");
-        let endDate = interaction.options.getString("enddate");
+        let startDate = interaction.options.getString("startdate", true);
+        let endDate = interaction.options.getString("enddate", true);
 
         let user = interaction.user.id;
         let userDB = classeDB[user];
