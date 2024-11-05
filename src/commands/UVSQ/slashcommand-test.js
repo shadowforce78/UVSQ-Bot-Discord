@@ -8,8 +8,8 @@ const classeDB = require('../../../db.json')
 
 module.exports = new ApplicationCommand({
     command: {
-        name: 'edt',
-        description: 'Affiche l\'emploi du temps sur une période donnée.',
+        name: 'test',
+        description: 'Commande de test.',
         type: 1,
         options: [
             {
@@ -144,44 +144,14 @@ module.exports = new ApplicationCommand({
             const eventDetails = await Promise.all(
                 calendarRes.map((event) => getEvent(event.id))
             );
+            const eventDetailsArray = Object.values(eventDetails);
 
-            if (eventDetails.length === 0) {
+            if (eventDetailsArray.length === 0) {
                 return interaction.reply({
                     content: "Aucun cours trouvé pour cette période.",
                     ephemeral: true,
                 });
             }
-
-            const eventDetailsArray = JSON.stringify((Object.values(eventDetails)), null, 4);
-            console.log(eventDetailsArray);
-            
-            const startDateFormatted = formatDateForFileName(startDate);
-            const endDateFormatted = formatDateForFileName(endDate);
-            const fileName = `./src/EDTsaves/${classe}-${startDateFormatted}-${endDateFormatted}-image.png`;
-
-            if (!fs.existsSync(fileName)) {
-                await generateImage(classe, eventDetailsArray);
-            }
-
-            // Bouton d'interaction pour changer de jour
-            // const row = {
-            //     type: "ACTION_ROW",
-            //     components: [
-            //         {
-            //             type: "BUTTON",
-            //             label: "Jour précédent",
-            //             style: "PRIMARY",
-            //             customId: `previous`,
-            //         },
-            //         {
-            //             type: "BUTTON",
-            //             label: "Jour suivant",
-            //             style: "PRIMARY",
-            //             customId: `next`,
-            //         },
-            //     ],
-            // };
-
             
             // Ajouter les données de lastRequest a la db
 
@@ -190,9 +160,7 @@ module.exports = new ApplicationCommand({
             fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 4));
 
             interaction.reply({
-                content: "Voici votre emploi du temps pour la période demandée :",
-                files: [fileName],
-                // components: [row],
+                content: 'Commande de test effectuée.',
             });
         } catch (err) {
             console.error(err);
