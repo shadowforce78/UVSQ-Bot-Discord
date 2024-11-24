@@ -9,7 +9,7 @@ const classeDB = require('../../../db.json')
 module.exports = new ApplicationCommand({
     command: {
         name: 'test',
-        description: 'Commande de test.',
+        description: '[TESTING COMMAND] Commande de test.',
         type: 1,
         options: [
             {
@@ -22,7 +22,8 @@ module.exports = new ApplicationCommand({
         ],
     },
     options: {
-        cooldown: 5000
+        cooldown: 5000,
+        botDevelopers:true
     },
     /**
      * 
