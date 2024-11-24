@@ -85,10 +85,13 @@ module.exports = new ApplicationCommand({
 
             const eventDetailArray = [];
 
+
             for (let i = 0; i < eventID.length; i++) {
                 const event = await getEvent(eventID[i]);
                 eventDetailArray.push(event);
             }
+
+            console.log(eventDetailArray);
 
             const image = await generateImage(classe, eventDetailArray);
             const buffer = fs.readFileSync(image);
