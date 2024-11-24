@@ -91,8 +91,6 @@ module.exports = new ApplicationCommand({
                 eventDetailArray.push(event);
             }
 
-            console.log(eventDetailArray);
-
             const image = await generateImage(classe, eventDetailArray);
             const buffer = fs.readFileSync(image);
             await interaction.reply({
