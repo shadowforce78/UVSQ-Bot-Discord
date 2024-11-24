@@ -1,7 +1,7 @@
 const AutocompleteComponent = require("../../structure/AutocompleteComponent");
 
 module.exports = new AutocompleteComponent({
-    commandName: 'edt',
+    commandName: 'test',
     run: async (client, interaction) => {
         const focusedOption = interaction.options.getFocused(true);
         const currentInput = focusedOption.value.toLowerCase();
@@ -34,25 +34,6 @@ module.exports = new AutocompleteComponent({
             const filteredDates = allDates
                 .filter(date => date.startsWith(currentInput))
                 .slice(0, 25); // Limite à 25 suggestions
-
-            await interaction.respond(
-                filteredDates.map(date => ({
-                    name: formatDateDisplay(date),
-                    value: date
-                }))
-            );
-        } else if (focusedOption.name === "enddate") {
-            // Pour la date de fin, montrer uniquement les dates après la date de début
-            const startDate = interaction.options.getString("startdate");
-            let availableDates = allDates;
-
-            if (startDate) {
-                availableDates = allDates.filter(date => date >= startDate);
-            }
-
-            const filteredDates = availableDates
-                .filter(date => date.startsWith(currentInput))
-                .slice(0, 25);
 
             await interaction.respond(
                 filteredDates.map(date => ({
