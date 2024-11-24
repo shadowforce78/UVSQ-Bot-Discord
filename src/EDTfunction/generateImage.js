@@ -17,12 +17,12 @@ const CANVAS_CONFIG = {
         CONTENT: '18px Arial'
     },
     DIMENSIONS: {
-        WIDTH: 1400,                  // Largeur augmentée à 1400px
+        WIDTH: 1400,
         ROW_HEIGHT: 60,
         HEADER_HEIGHT: 100,
-        PADDING: 50,                  // Padding augmenté à 50px
+        PADDING: 50,
         BORDER_RADIUS: 15,
-        BOTTOM_MARGIN: 50            // Nouvelle marge en bas
+        BOTTOM_MARGIN: 50
     }
 };
 
@@ -41,8 +41,11 @@ const EVENT_CATEGORIES = {
 function getEventCategory(category) {
     const categoryMap = {
         'TP': EVENT_CATEGORIES.TP,
+        'Travaux Pratiques (TP)': EVENT_CATEGORIES.TP,
         'TD': EVENT_CATEGORIES.TD,
+        'Travaux Dirigés (TD)': EVENT_CATEGORIES.TD,
         'CM': EVENT_CATEGORIES.CM,
+        'Cours Magistraux (CM)': EVENT_CATEGORIES.CM,
         'Projet en autonomie': EVENT_CATEGORIES.SAE,
         'Integration': EVENT_CATEGORIES.INT,
         'Reunion': EVENT_CATEGORIES.REUNION,
@@ -54,6 +57,7 @@ function getEventCategory(category) {
 
     return categoryMap[category] || { color: CANVAS_CONFIG.COLORS.BACKGROUND, label: 'N/A' };
 }
+
 
 function truncateText(ctx, text, maxWidth) {
     const ellipsis = '...';
@@ -77,25 +81,24 @@ function truncateText(ctx, text, maxWidth) {
 }
 
 function drawHeader(ctx, date, x, y, width) {
-    // Fond de l'en-tête avec dégradé
     const gradient = ctx.createLinearGradient(x, y, x, y + CANVAS_CONFIG.DIMENSIONS.HEADER_HEIGHT);
     gradient.addColorStop(0, CANVAS_CONFIG.COLORS.HEADER_BACKGROUND);
     gradient.addColorStop(1, '#282828');
     ctx.fillStyle = gradient;
     ctx.fillRect(x, y, width, CANVAS_CONFIG.DIMENSIONS.HEADER_HEIGHT);
 
-    // Texte de l'en-tête
     ctx.font = CANVAS_CONFIG.FONTS.HEADER;
     ctx.fillStyle = CANVAS_CONFIG.COLORS.TEXT;
     ctx.textAlign = 'center';
     ctx.fillText(`Emploi du temps - ${date}`, x + width / 2, y + 60);
 }
 
+
 function drawRow(ctx, course, x, y, rowIndex, width) {
     const { DIMENSIONS, COLORS } = CANVAS_CONFIG;
     const eventCategory = getEventCategory(course['Event category']);
 
-    // Fond de la ligne avec dégradé subtil
+    // Fond de la ligne
     const gradient = ctx.createLinearGradient(x, y, x, y + DIMENSIONS.ROW_HEIGHT);
     const baseColor = rowIndex % 2 === 0 ? COLORS.BACKGROUND : COLORS.ALTERNATE_ROW;
     gradient.addColorStop(0, baseColor);
@@ -107,12 +110,14 @@ function drawRow(ctx, course, x, y, rowIndex, width) {
     ctx.strokeStyle = COLORS.BORDER;
     ctx.strokeRect(x, y, width, DIMENSIONS.ROW_HEIGHT);
 
-    // Informations du cours avec espacement ajusté
+    // Distribution optimisée de l'espace
+    const totalWidth = width - (2 * DIMENSIONS.PADDING);
     const fields = [
-        { text: course.time || 'N/A', width: 180 },        // Largeur augmentée
-        { text: course.Module || 'N/A', width: 580 },      // Largeur augmentée
-        { text: course.Staff || 'N/A', width: 320 },       // Largeur augmentée
-        { text: course.Room || 'N/A', width: 170 }         // Largeur augmentée
+        { text: course.time || 'N/A', width: totalWidth * 0.12 },    // 12% pour l'heure
+        { text: course.Module || 'N/A', width: totalWidth * 0.40 },  // 40% pour le module
+        { text: course.Staff || 'N/A', width: totalWidth * 0.23 },   // 23% pour l'enseignant
+        { text: course.Room || 'N/A', width: totalWidth * 0.13 },    // 13% pour la salle
+        { type: 'category', width: totalWidth * 0.12 }               // 12% pour la catégorie
     ];
 
     let currentX = x + DIMENSIONS.PADDING;
@@ -120,35 +125,41 @@ function drawRow(ctx, course, x, y, rowIndex, width) {
     ctx.fillStyle = COLORS.TEXT;
     ctx.textAlign = 'left';
 
-    fields.forEach(({ text, width }) => {
-        const truncatedText = truncateText(ctx, text, width - 30); // Marge de texte augmentée
-        ctx.fillText(truncatedText, currentX + 10, y + (DIMENSIONS.ROW_HEIGHT / 2) + 6);
-        currentX += width;
+    fields.forEach((field, index) => {
+        if (field.type === 'category') {
+            // Dessiner la catégorie
+            const categoryWidth = field.width - 20; // Marge pour la catégorie
+            const categoryX = currentX;
+            const radius = 10;
+
+            ctx.beginPath();
+            ctx.moveTo(categoryX + 5 + radius, y + 5);
+            ctx.lineTo(categoryX + categoryWidth - 5 - radius, y + 5);
+            ctx.arcTo(categoryX + categoryWidth - 5, y + 5, categoryX + categoryWidth - 5, y + 5 + radius, radius);
+            ctx.lineTo(categoryX + categoryWidth - 5, y + DIMENSIONS.ROW_HEIGHT - 5 - radius);
+            ctx.arcTo(categoryX + categoryWidth - 5, y + DIMENSIONS.ROW_HEIGHT - 5, categoryX + categoryWidth - 5 - radius, y + DIMENSIONS.ROW_HEIGHT - 5, radius);
+            ctx.lineTo(categoryX + 5 + radius, y + DIMENSIONS.ROW_HEIGHT - 5);
+            ctx.arcTo(categoryX + 5, y + DIMENSIONS.ROW_HEIGHT - 5, categoryX + 5, y + DIMENSIONS.ROW_HEIGHT - 5 - radius, radius);
+            ctx.lineTo(categoryX + 5, y + 5 + radius);
+            ctx.arcTo(categoryX + 5, y + 5, categoryX + 5 + radius, y + 5, radius);
+            ctx.closePath();
+
+            ctx.fillStyle = eventCategory.color;
+            ctx.fill();
+
+            ctx.fillStyle = COLORS.TEXT;
+            ctx.textAlign = 'center';
+            ctx.fillText(eventCategory.label, categoryX + categoryWidth / 2, y + (DIMENSIONS.ROW_HEIGHT / 2) + 6);
+        } else {
+            // Dessiner le texte
+            const padding = 10;
+            const truncatedText = truncateText(ctx, field.text, field.width - (padding * 2));
+            ctx.fillStyle = COLORS.TEXT;
+            ctx.textAlign = 'left';
+            ctx.fillText(truncatedText, currentX + padding, y + (DIMENSIONS.ROW_HEIGHT / 2) + 6);
+        }
+        currentX += field.width;
     });
-
-    // Type d'événement avec position ajustée
-    const typeX = currentX - 30; // Ajustement de la position
-    const typeWidth = 170;      // Largeur augmentée
-    const radius = 10;
-
-    ctx.beginPath();
-    ctx.moveTo(typeX + 5 + radius, y + 5);
-    ctx.lineTo(typeX + typeWidth - 5 - radius, y + 5);
-    ctx.arcTo(typeX + typeWidth - 5, y + 5, typeX + typeWidth - 5, y + 5 + radius, radius);
-    ctx.lineTo(typeX + typeWidth - 5, y + DIMENSIONS.ROW_HEIGHT - 5 - radius);
-    ctx.arcTo(typeX + typeWidth - 5, y + DIMENSIONS.ROW_HEIGHT - 5, typeX + typeWidth - 5 - radius, y + DIMENSIONS.ROW_HEIGHT - 5, radius);
-    ctx.lineTo(typeX + 5 + radius, y + DIMENSIONS.ROW_HEIGHT - 5);
-    ctx.arcTo(typeX + 5, y + DIMENSIONS.ROW_HEIGHT - 5, typeX + 5, y + DIMENSIONS.ROW_HEIGHT - 5 - radius, radius);
-    ctx.lineTo(typeX + 5, y + 5 + radius);
-    ctx.arcTo(typeX + 5, y + 5, typeX + 5 + radius, y + 5, radius);
-    ctx.closePath();
-
-    ctx.fillStyle = eventCategory.color;
-    ctx.fill();
-
-    ctx.fillStyle = COLORS.TEXT;
-    ctx.textAlign = 'center';
-    ctx.fillText(eventCategory.label, typeX + typeWidth / 2, y + (DIMENSIONS.ROW_HEIGHT / 2) + 6);
 }
 
 
@@ -172,7 +183,7 @@ async function generateImage(classe, dayCourses) {
     const canvasHeight = DIMENSIONS.HEADER_HEIGHT +
         (DIMENSIONS.ROW_HEIGHT * dayCourses.length) +
         DIMENSIONS.PADDING +
-        DIMENSIONS.BOTTOM_MARGIN; // Ajout de la marge du bas
+        DIMENSIONS.BOTTOM_MARGIN;
 
     const canvas = createCanvas(canvasWidth, canvasHeight);
     const ctx = canvas.getContext('2d');
@@ -184,7 +195,7 @@ async function generateImage(classe, dayCourses) {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    // Coins arrondis avec marges étendues
+    // Coins arrondis
     ctx.beginPath();
     ctx.moveTo(DIMENSIONS.PADDING, DIMENSIONS.PADDING);
     ctx.arcTo(canvasWidth - DIMENSIONS.PADDING, DIMENSIONS.PADDING,
@@ -202,21 +213,18 @@ async function generateImage(classe, dayCourses) {
     ctx.closePath();
     ctx.clip();
 
-    // En-tête
+    // En-tête et lignes
     const date = dayCourses[0].date || 'Date inconnue';
     drawHeader(ctx, date, 0, DIMENSIONS.PADDING, canvasWidth);
 
-    // Lignes
     dayCourses.forEach((course, index) => {
         const y = DIMENSIONS.HEADER_HEIGHT + index * DIMENSIONS.ROW_HEIGHT + DIMENSIONS.PADDING;
         drawRow(ctx, course, DIMENSIONS.PADDING, y, index, DIMENSIONS.WIDTH);
     });
 
-    // Sauvegarde de l'image
     const fileName = `./src/EDTsaves/${classe}-${date.replace(/\//g, '-')}.png`;
     fs.writeFileSync(fileName, canvas.toBuffer('image/png'));
 
     return fileName;
 }
-
 module.exports = { generateImage };

@@ -13,8 +13,8 @@ module.exports = new ApplicationCommand({
         type: 1,
         options: [
             {
-                name: "startdate",
-                description: "Date de début de l'emploi du temps (format : YYYY-MM-DD)",
+                name: "date",
+                description: "Date du jour a afficher (YYYY-MM-DD)",
                 type: ApplicationCommandOptionType.String,
                 required: true,
                 autocomplete: true,
@@ -30,7 +30,7 @@ module.exports = new ApplicationCommand({
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (client, interaction) => {
-        let startDate = interaction.options.getString("startdate", true);
+        let startDate = interaction.options.getString("date", true);
         let endDate = startDate;
 
         let user = interaction.user.id;
@@ -91,7 +91,30 @@ module.exports = new ApplicationCommand({
                 eventDetailArray.push(event);
             }
 
-            const image = await generateImage(classe, eventDetailArray);
+            function sortCoursesByTime(courses) {
+                return courses.sort((a, b) => {
+                    // Extraire les heures de début des deux cours
+                    const timeA = a.time.split('-')[0]; // Exemple : '08:30'
+                    const timeB = b.time.split('-')[0]; // Exemple : '10:30'
+            
+                    // Convertir les heures en minutes totales
+                    const minutesA = convertTimeToMinutes(timeA);
+                    const minutesB = convertTimeToMinutes(timeB);
+            
+                    // Comparer les minutes totales pour le tri
+                    return minutesA - minutesB;
+                });
+            }
+            
+            function convertTimeToMinutes(time) {
+                const [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
+            }
+
+            const sortedCourses = sortCoursesByTime(eventDetailArray);
+
+
+            const image = await generateImage(classe, sortedCourses);
             const buffer = fs.readFileSync(image);
             await interaction.reply({
                 files: [{

@@ -29,7 +29,7 @@ module.exports = new AutocompleteComponent({
         const allDates = generateDateSuggestions();
 
         // Filtrer les dates en fonction de l'option en cours
-        if (focusedOption.name === "startdate") {
+        if (focusedOption.name === "date") {
             // Pour la date de début, montrer toutes les dates disponibles
             const filteredDates = allDates
                 .filter(date => date.startsWith(currentInput))
