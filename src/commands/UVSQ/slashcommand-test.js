@@ -161,6 +161,10 @@ module.exports = new ApplicationCommand({
 
             interaction.reply({
                 content: 'Commande de test effectuée.',
+                files: [{
+                    attachment: generateImage(classe, eventDetailsArray),
+                    name: `edt_${classe}_${formatDateForFileName(startDate)}_${formatDateForFileName(endDate)}.png`
+                }]
             });
         } catch (err) {
             console.error(err);

@@ -56,18 +56,18 @@ function truncateText(ctx, text, maxWidth) {
 
     let left = 0;
     let right = text.length;
-    
+
     while (left < right) {
         const mid = Math.ceil((left + right) / 2);
         const testText = text.slice(0, mid) + ellipsis;
-        
+
         if (ctx.measureText(testText).width <= maxWidth) {
             left = mid;
         } else {
             right = mid - 1;
         }
     }
-    
+
     return text.slice(0, left) + ellipsis;
 }
 
@@ -76,7 +76,7 @@ function truncateText(ctx, text, maxWidth) {
  */
 function getEventCategory(category) {
     if (!category) return { type: 'N/A', color: CANVAS_CONFIG.COLORS.BACKGROUND };
-    
+
     const categoryMap = {
         'TP': EVENT_CATEGORIES.TP,
         'TD': EVENT_CATEGORIES.TD,
@@ -124,7 +124,7 @@ function drawDayHeader(ctx, date, x, y, width) {
  */
 function drawCourseCell(ctx, course, x, y, rowIndex) {
     const { DIMENSIONS, COLORS } = CANVAS_CONFIG;
-    
+
     // Background
     ctx.fillStyle = rowIndex % 2 === 0 ? COLORS.BACKGROUND : COLORS.ALTERNATE_ROW;
     ctx.fillRect(x, y, DIMENSIONS.DAY_WIDTH, DIMENSIONS.ROW_HEIGHT);
@@ -189,10 +189,10 @@ async function generateImage(classe, coursParJourArray) {
 
     // Dimensions du canvas
     const canvasWidth = (DIMENSIONS.DAY_WIDTH + DIMENSIONS.PADDING) * columnsCount + DIMENSIONS.PADDING;
-    const canvasHeight = DIMENSIONS.HEADER_HEIGHT + 
-                        (DIMENSIONS.ROW_HEIGHT * (maxCoursesPerDay + 1) + 
-                        DIMENSIONS.DAY_HEADER_HEIGHT + DIMENSIONS.PADDING) * rowsCount + 
-                        DIMENSIONS.PADDING;
+    const canvasHeight = DIMENSIONS.HEADER_HEIGHT +
+        (DIMENSIONS.ROW_HEIGHT * (maxCoursesPerDay + 1) +
+            DIMENSIONS.DAY_HEADER_HEIGHT + DIMENSIONS.PADDING) * rowsCount +
+        DIMENSIONS.PADDING;
 
     // Création du canvas
     const canvas = createCanvas(canvasWidth, canvasHeight);
@@ -214,8 +214,8 @@ async function generateImage(classe, coursParJourArray) {
         const rowIndex = Math.floor(dayIndex / columnsCount);
 
         const startX = DIMENSIONS.PADDING + columnIndex * (DIMENSIONS.DAY_WIDTH + DIMENSIONS.PADDING);
-        const startY = DIMENSIONS.HEADER_HEIGHT + rowIndex * (DIMENSIONS.ROW_HEIGHT * (maxCoursesPerDay + 1) + 
-                      DIMENSIONS.DAY_HEADER_HEIGHT + DIMENSIONS.PADDING);
+        const startY = DIMENSIONS.HEADER_HEIGHT + rowIndex * (DIMENSIONS.ROW_HEIGHT * (maxCoursesPerDay + 1) +
+            DIMENSIONS.DAY_HEADER_HEIGHT + DIMENSIONS.PADDING);
 
         // Container du jour
         ctx.fillStyle = CANVAS_CONFIG.COLORS.DAY_BACKGROUND;
@@ -245,7 +245,7 @@ async function generateImage(classe, coursParJourArray) {
     const formatDate = date => date.replace(/\//g, '-');
     const fileName = `./src/EDTsaves/${classe}-${formatDate(dates[0])}-${formatDate(dates[dates.length - 1])}-image.png`;
     fs.writeFileSync(fileName, canvas.toBuffer('image/png'));
-    
+
     return fileName;
 }
 
