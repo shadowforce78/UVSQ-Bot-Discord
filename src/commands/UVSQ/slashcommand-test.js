@@ -160,11 +160,7 @@ module.exports = new ApplicationCommand({
             fs.writeFileSync("./db.json", JSON.stringify(classeDB, null, 4));
 
             interaction.reply({
-                content: 'Commande de test effectuée.',
-                files: [{
-                    attachment: generateImage(classe, eventDetailsArray),
-                    name: `edt_${classe}_${formatDateForFileName(startDate)}_${formatDateForFileName(endDate)}.png`
-                }]
+                content: 'Commande de test effectuée.'
             });
         } catch (err) {
             console.error(err);
