@@ -1,7 +1,7 @@
 const AutocompleteComponent = require("../../structure/AutocompleteComponent");
 
 module.exports = new AutocompleteComponent({
-    commandName: 'test',
+    commandName: 'edt',
     run: async (client, interaction) => {
         const focusedOption = interaction.options.getFocused(true);
         const currentInput = focusedOption.value.toLowerCase();
