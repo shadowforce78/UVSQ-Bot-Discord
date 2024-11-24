@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction } = require("discord.js");
+const { ChatInputCommandInteraction, EmbedBuilder } = require("discord.js");
 const DiscordBot = require("../../client/DiscordBot");
 const ApplicationCommand = require("../../structure/ApplicationCommand");
 
@@ -18,8 +18,17 @@ module.exports = new ApplicationCommand({
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (client, interaction) => {
+        const commandsList = client.collection.application_commands.map((cmd) => {
+            return `\`/${cmd.command.name}\` - ${cmd.command.description}`;
+        }).join('\n');
+
+        const embed = new EmbedBuilder()
+            .setTitle('Available Commands')
+            .setDescription(commandsList)
+            .setColor(0x00AE86);
+
         await interaction.reply({
-            content: `${client.collection.application_commands.map((cmd) => '\`/' + cmd.command.name + '\`').join(', ')}`
+            embeds: [embed]
         });
     }
 }).toJSON();
