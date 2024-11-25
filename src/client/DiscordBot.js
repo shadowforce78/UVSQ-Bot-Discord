@@ -35,7 +35,8 @@ class DiscordBot extends Client {
         { name: 'UVSQ', type: 3 },
         { name: '/classe', type: 3 },
         { name: '/edt', type: 3 },
-        { name: '/help', type: 3 }
+        { name: '/help', type: 3 },
+        { name: '/support', type: 3 }
     ];
 
     commands_handler = new CommandsHandler(this);
