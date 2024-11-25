@@ -18,13 +18,20 @@ module.exports = new ApplicationCommand({
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (client, interaction) => {
-        const commandsList = client.collection.application_commands.map((cmd) => {
-            return `\`/${cmd.command.name}\` - ${cmd.command.description}`;
-        }).join('\n');
+
+
+
+        const commandsList = [
+            `/help - Reponds la liste des commandes disponibles.`,
+            `/ping - Réponds avec le ping du bot.`,
+            `/classe <classe> - Permet de sélectionner sa classe.`,
+            `/edt <date> - Permet de consulter l'emploi du temps.`,
+            `/support - Permet de contacter le support.`,
+        ]
 
         const embed = new EmbedBuilder()
-            .setTitle('Available Commands')
-            .setDescription(commandsList)
+            .setTitle('Liste des commandes')
+            .setDescription(commandsList.join('\n'))
             .setColor(0x00AE86);
 
         await interaction.reply({
