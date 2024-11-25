@@ -52,7 +52,12 @@ module.exports = new Component({
         try {
             const events = await getCalendar(startDate, endDate, classe);
             if (events.length === 0) {
-                await interaction.reply("Aucun événement trouvé pour cette période (Surement le weekend).");
+                await interaction.reply(
+                    {
+                        content: "Aucun événement trouvé pour cette période (Surement le weekend).",
+                        ephemeral: true
+                    }
+                );
                 return;
             }
 

@@ -43,7 +43,7 @@ module.exports = new ApplicationCommand({
                 classe: classeUser,
                 dailyReminder: false,
                 weeklyReminder: false,
-                lastRequest: ["None", "None"],
+                lastRequest: "None",
             };
             // console.log("Nouvel utilisateur ajouté :", classeDB[user]);
         } else {
