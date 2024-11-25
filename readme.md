@@ -14,12 +14,11 @@ Un bot Discord pour gérer l'emploi du temps de votre IUT ! Suivez ces instructi
    - **Exemple** : `/classe INF1-B2`
 
 2. **`/edt`**
-   - **Description** : Récupère l'emploi du temps pour une période donnée.
+   - **Description** : Récupère l'emploi du temps pour la journée
    - **Arguments** :
-     - `debut` (date) : Date de début au format `YYYY-MM-DD`.
-     - `fin` (date) : Date de fin au format `YYYY-MM-DD`.
-   - **Exemple** : `/edt 2024-10-01 2024-10-07`
-   - **Remarque** : Pour des raisons de performance, la période ne doit pas dépasser 4 jours affichables.
+     - `date` (date) : Date de début au format `YYYY-MM-DD`.
+   - **Exemple** : `/edt 2024-10-01`
+   - **Remarque** : Pour des raisons de performance, seuls un seul jour est affiché.
 
 ## 🛠️ Installation
 
@@ -82,10 +81,10 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
 
 ## 📝 TODO List
 
-- [ ] Ajouter un moyen de choisir le type d'edt (par jour ou par semaine)
 - [ ] Ajouter le système de rappel par semaine (configReminder).
 - [ ] Ajouter un moyen interactif pour ajouter des nouvelles classes (github actions dans un ficher json externe).
 - [ ] Régler le problème des doubles cours (ex : le 2024-10-17, deux cours en même temps mais inversés à la moitié).
+- [x] Ajouter un moyen de choisir le type d'edt (par jour ou par semaine)
 - [x] Ajouter un meilleur système de sélection de classe et de date (Auto-complétion).
 - [x] Ajouter deux boutons sous l'image pour changer de semaine (Précédent et Suivant).
 - [x] Ajouter deux boutons sous l'image pour changer de jour (Précédent et Suivant).
