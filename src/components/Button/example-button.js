@@ -3,7 +3,7 @@ const DiscordBot = require("../../client/DiscordBot");
 const Component = require("../../structure/Component");
 
 module.exports = new Component({
-    customId: 'example-button-id',
+    customId: 'next_day',
     type: 'button',
     /**
      * 
