@@ -28,6 +28,8 @@ module.exports = new ApplicationCommand({
         let user = interaction.user.id;
         let userDB = classeDB[user];
 
+
+
         // Si l'utilisateur n'a pas de classe
         if (!userDB) {
             return interaction.reply({
@@ -128,6 +130,10 @@ module.exports = new ApplicationCommand({
             const buffer = fs.readFileSync(image);
 
             const row = createNavigationButtons();
+
+            // Update lastRequest
+            userDB.lastRequest = startDate;
+            fs.writeFileSync('./db.json', JSON.stringify(classeDB, null, 2));
 
             await interaction.reply({
                 files: [{

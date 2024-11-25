@@ -24,10 +24,16 @@ module.exports = new Component({
                 ephemeral: true,
             });
         }
-
         let currentDate = new Date();
         let startDate = currentDate.toISOString().split('T')[0];
         let endDate = startDate;
+
+        // Skip weekends
+        while (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            startDate = currentDate.toISOString().split('T')[0];
+            endDate = startDate;
+        }
 
         const classe = userDB.classe;
 
@@ -94,6 +100,12 @@ module.exports = new Component({
             const buffer = fs.readFileSync(image);
 
             const row = createNavigationButtons();
+
+            
+
+            // Update lastRequest in the database
+            userDB.lastRequest = startDate;
+            fs.writeFileSync('./db.json', JSON.stringify(classeDB, null, 2));
 
             await interaction.update({
                 files: [{

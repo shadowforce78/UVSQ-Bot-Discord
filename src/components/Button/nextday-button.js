@@ -25,9 +25,15 @@ module.exports = new Component({
             });
         }
 
-        let currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 1);
-        let startDate = currentDate.toISOString().split('T')[0];
+        let lastRequestDate = new Date(userDB.lastRequest);
+        lastRequestDate.setDate(lastRequestDate.getDate() + 1);
+
+        // Skip weekends
+        while (lastRequestDate.getDay() === 0 || lastRequestDate.getDay() === 6) {
+            lastRequestDate.setDate(lastRequestDate.getDate() + 1);
+        }
+
+        let startDate = lastRequestDate.toISOString().split('T')[0];
         let endDate = startDate;
 
         const classe = userDB.classe;
@@ -93,6 +99,12 @@ module.exports = new Component({
             const buffer = fs.readFileSync(image);
 
             const row = createNavigationButtons();
+
+
+
+            // Update lastRequest in the database
+            userDB.lastRequest = startDate;
+            fs.writeFileSync('./db.json', JSON.stringify(classeDB, null, 2));
 
             await interaction.update({
                 files: [{
