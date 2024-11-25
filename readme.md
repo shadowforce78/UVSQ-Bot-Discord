@@ -84,6 +84,7 @@ Pour ceux qui souhaitent forker et contribuer à l'amélioration du bot, suivez 
 - [ ] Ajouter le système de rappel par semaine (configReminder).
 - [ ] Ajouter un moyen interactif pour ajouter des nouvelles classes (github actions dans un ficher json externe).
 - [ ] Régler le problème des doubles cours (ex : le 2024-10-17, deux cours en même temps mais inversés à la moitié).
+- [x] Ajouter un mode sombre pour l'image de l'emploi du temps.
 - [x] Ajouter un moyen de choisir le type d'edt (par jour ou par semaine)
 - [x] Ajouter un meilleur système de sélection de classe et de date (Auto-complétion).
 - [x] Ajouter deux boutons sous l'image pour changer de semaine (Précédent et Suivant).
