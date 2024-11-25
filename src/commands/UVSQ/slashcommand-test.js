@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const DiscordBot = require("../../client/DiscordBot.js");
 const ApplicationCommand = require("../../structure/ApplicationCommand.js");
 const fs = require("fs");

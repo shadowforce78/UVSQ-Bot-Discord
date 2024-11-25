@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction, ApplicationCommandOptionType } = require("discord.js");
+const { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const DiscordBot = require("../../client/DiscordBot.js");
 const ApplicationCommand = require("../../structure/ApplicationCommand.js");
 const fs = require("fs");
@@ -36,6 +36,8 @@ module.exports = new ApplicationCommand({
         let user = interaction.user.id;
         let userDB = classeDB[user];
 
+
+
         // Si l'utilisateur n'a pas de classe
         if (!userDB) {
             return interaction.reply({
@@ -71,6 +73,24 @@ module.exports = new ApplicationCommand({
 
         const classe = userDB.classe;
 
+        function createNavigationButtons() {
+            return new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('previous_day')
+                        .setLabel('Jour précédent')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('today')
+                        .setLabel('Aujourd\'hui')
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId('next_day')
+                        .setLabel('Jour suivant')
+                        .setStyle(ButtonStyle.Primary)
+                );
+        }
+
         try {
             const events = await getCalendar(startDate, endDate, classe);
             if (events.length === 0) {
@@ -96,16 +116,16 @@ module.exports = new ApplicationCommand({
                     // Extraire les heures de début des deux cours
                     const timeA = a.time.split('-')[0]; // Exemple : '08:30'
                     const timeB = b.time.split('-')[0]; // Exemple : '10:30'
-            
+
                     // Convertir les heures en minutes totales
                     const minutesA = convertTimeToMinutes(timeA);
                     const minutesB = convertTimeToMinutes(timeB);
-            
+
                     // Comparer les minutes totales pour le tri
                     return minutesA - minutesB;
                 });
             }
-            
+
             function convertTimeToMinutes(time) {
                 const [hours, minutes] = time.split(':').map(Number);
                 return hours * 60 + minutes;
@@ -116,11 +136,19 @@ module.exports = new ApplicationCommand({
 
             const image = await generateImage(classe, sortedCourses);
             const buffer = fs.readFileSync(image);
+
+            const row = createNavigationButtons();
+
+            // Update lastRequest
+            userDB.lastRequest = startDate;
+            fs.writeFileSync('./db.json', JSON.stringify(classeDB, null, 2));
+
             await interaction.reply({
                 files: [{
                     attachment: buffer,
                     name: "emploi-du-temps.png"
-                }]
+                }],
+                components: [row]
             });
 
         } catch (error) {
